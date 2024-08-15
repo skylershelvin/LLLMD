@@ -21,8 +21,8 @@ public class UserService implements Serviceable<User> {
     }
 
     @Override
-    public User create(User newObject) {
-        return null;
+    public User create(User newUser) {
+        return userRepository.save(newUser);
     }
 
     @Override
