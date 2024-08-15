@@ -1,5 +1,6 @@
-package com.revature.LLL.MedicalRecord;
+package com.revature.LLL.LivestockMedicalRecord;
 
+import com.revature.LLL.User.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "livestock_medical_records")
-public class MedicalRecord {
+public class LivestockMedicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int entryId;
@@ -20,8 +21,7 @@ public class MedicalRecord {
     private int patientId;
     @ManyToOne
     @JoinColumn(name="owner_id")
-    // Owner from farmers table
-    private int ownerId;
+    private User ownerId;
     private String medicalHistory;
     private String currentCondition;
     private String treatmentPlan;
