@@ -14,6 +14,4 @@ public class UserController {
     public UserController(UserService userService){
         this.userService = userService;
     }
-
-
 }

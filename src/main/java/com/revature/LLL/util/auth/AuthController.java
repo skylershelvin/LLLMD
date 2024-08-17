@@ -20,7 +20,6 @@ public class AuthController {
 
     @PostMapping
     private ResponseEntity<Void> postLogin(@RequestParam String email, @RequestParam String password) throws javax.naming.AuthenticationException {
-        System.out.println("Received email: " + email + " and password: " + password);
 
         User user = authService.login(email, password);
         return ResponseEntity.noContent()
