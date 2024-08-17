@@ -23,8 +23,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name="user_type", columnDefinition = "varchar(20) default 'OWNER'")
     @Enumerated(EnumType.STRING)
+    @Column(name="user_type", nullable = false)
     private userType userType;
 
     public enum userType {
