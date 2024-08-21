@@ -1,31 +1,31 @@
 package com.revature.LLL.LivestockRecord.converters;
 
-import com.revature.LLL.LivestockRecord.CurrentCondition;
+import com.revature.LLL.LivestockRecord.TreatmentPlan;
 import jakarta.persistence.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 
 @Converter(autoApply = true)
-public class TreatmentPlanConverter implements AttributeConverter<CurrentCondition, String> {
+public class TreatmentPlanConverter implements AttributeConverter<TreatmentPlan, String> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     // takes in CurrentCondition instance and serializes it into a json string to store in database
-    public String convertToDatabaseColumn(CurrentCondition condition) {
+    public String convertToDatabaseColumn(TreatmentPlan treatmentPlan) {
         try {
-            return objectMapper.writeValueAsString(condition);
+            return objectMapper.writeValueAsString(treatmentPlan);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Error converting CurrentCondition to JSON string", e);
+            throw new IllegalArgumentException("Error converting TreatmentPlan to JSON string", e);
         }
     }
 
     @Override
-    public CurrentCondition convertToEntityAttribute(String dbData) {
+    public TreatmentPlan convertToEntityAttribute(String dbData) {
         try {
-            return objectMapper.readValue(dbData, CurrentCondition.class);
+            return objectMapper.readValue(dbData, TreatmentPlan.class);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Error converting JSON string to CurrentCondition object", e);
+            throw new IllegalArgumentException("Error converting JSON string to TreatmentPlan object", e);
         }
     }
 }
