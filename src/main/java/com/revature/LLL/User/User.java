@@ -22,4 +22,6 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private String userType;
 }

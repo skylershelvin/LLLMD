@@ -22,7 +22,7 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public User create(User newUser) {
-        return userRepository.save(newUser);
+        return userRepository.saveAndFlush(newUser);
     }
 
     @Override
