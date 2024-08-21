@@ -1,6 +1,5 @@
 package com.revature.LLL.LivestockRecord;
 
-import com.revature.LLL.LivestockMedicalRecord.LivestockMedicalRecordRepository;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

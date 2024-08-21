@@ -1,6 +1,5 @@
 package com.revature.LLL.LivestockRecord;
 
-import com.revature.LLL.LivestockMedicalRecord.LivestockMedicalRecordService;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
