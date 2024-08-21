@@ -22,6 +22,12 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
-    private String userType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="user_type", nullable = false)
+    private userType userType;
+
+    public enum userType {
+        OWNER, VET
+    }
 }
