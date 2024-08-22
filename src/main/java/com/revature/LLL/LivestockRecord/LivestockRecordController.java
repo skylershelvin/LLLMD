@@ -7,10 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,12 +21,31 @@ public class LivestockRecordController {
         this.livestockRecordService = livestockRecordService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecords(@Valid @RequestHeader int userId) {
+    /**
+     * Get all livestock records for user
+     * @param userId
+     * @return
+     */
+    @GetMapping("/user")
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestHeader int userId) {
         if (userId == 0) {
             return ResponseEntity.badRequest().build();
         } else {
             return ResponseEntity.ok(livestockRecordService.getLivestockRecords(userId));
+        }
+    }
+
+    /**
+     * Get all livestock records for a livestock
+     * @param livestockId
+     * @return
+     */
+    @GetMapping("/livestock")
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByLivestockId(@RequestParam int livestockId) {
+        if (livestockId == 0) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(livestockRecordService.getLivestockRecordsByLivestockId(livestockId));
         }
     }
 

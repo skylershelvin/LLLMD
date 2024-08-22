@@ -12,4 +12,6 @@ import java.util.List;
 @Repository
 public interface LivestockRecordRepository extends JpaRepository<LivestockRecord, Integer> {
     List<LivestockRecord> findAllByOwner_UserId(int userId);
+
+    List<LivestockRecord> findAllByLivestock_AnimalId(int livestockId);
 }

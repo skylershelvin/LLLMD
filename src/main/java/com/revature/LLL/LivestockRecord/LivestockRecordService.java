@@ -41,4 +41,8 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     public Boolean delete(LivestockRecord deletedObject) {
         return null;
     }
+
+    public List<LivestockRecord> getLivestockRecordsByLivestockId(int livestockId) {
+        return livestockRecordRepository.findAllByLivestock_AnimalId(livestockId);
+    }
 }

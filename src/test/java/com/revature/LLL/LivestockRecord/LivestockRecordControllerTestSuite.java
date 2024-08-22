@@ -34,15 +34,32 @@ public class LivestockRecordControllerTestSuite {
     @Test
     public void testGetLivestockRecords() throws Exception {
         // Arrange
-        LivestockRecord record1 = new LivestockRecord(1, new User(), new MedicalHistory(), new CurrentCondition(), new TreatmentPlan(), new LivestockHealth(), new VetRecord(), new AdditionalNotes());
-        LivestockRecord record2 = new LivestockRecord(2, new User(), new MedicalHistory(), new CurrentCondition(), new TreatmentPlan(), new LivestockHealth(), new VetRecord(), new AdditionalNotes());
+        LivestockRecord record1 = new LivestockRecord(1, new Livestock(), new User(), new MedicalHistory(), new CurrentCondition(), new TreatmentPlan(), new LivestockHealth(), new VetRecord(), new AdditionalNotes());
+        LivestockRecord record2 = new LivestockRecord(2, new Livestock(), new User(), new MedicalHistory(), new CurrentCondition(), new TreatmentPlan(), new LivestockHealth(), new VetRecord(), new AdditionalNotes());
         List<LivestockRecord> records = Arrays.asList(record1, record2);
 
         when(livestockRecordService.getLivestockRecords(1)).thenReturn(records);
 
         // Act & Assert
-        mockMvc.perform(get("/medicalRecord")
+        mockMvc.perform(get("/medicalRecord/user")
                         .header("userId", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(records)));
+    }
+
+    @Test
+    public void testGetLivestockRecordsByLivestockId() throws Exception {
+        // Arrange
+        LivestockRecord record1 = new LivestockRecord(1, new Livestock(), new User(), new MedicalHistory(), new CurrentCondition(), new TreatmentPlan(), new LivestockHealth(), new VetRecord(), new AdditionalNotes());
+        LivestockRecord record2 = new LivestockRecord(2, new Livestock(), new User(), new MedicalHistory(), new CurrentCondition(), new TreatmentPlan(), new LivestockHealth(), new VetRecord(), new AdditionalNotes());
+        List<LivestockRecord> records = Arrays.asList(record1, record2);
+
+        when(livestockRecordService.getLivestockRecordsByLivestockId(1)).thenReturn(records);
+
+        // Act & Assert
+        mockMvc.perform(get("/medicalRecord/livestock")
+                        .param("livestockId", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(records)));

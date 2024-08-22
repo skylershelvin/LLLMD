@@ -17,6 +17,9 @@ public class LivestockRecord {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int entryId;
 
+    @OneToOne
+    private Livestock livestock;
+
     @ManyToOne
     private User owner;
 
