@@ -1,8 +1,10 @@
 package com.revature.LLL.LivestockRecord;
 
+import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.interfaces.Serviceable;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 @Service
@@ -28,8 +30,8 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     }
 
     @Override
-    public LivestockRecord findById(int id) {
-        return null;
+    public LivestockRecord findById(int entryId) throws DataNotFoundException {
+        return livestockRecordRepository.findByEntryId(entryId).orElseThrow(() -> new DataNotFoundException("No entry found with that entryId"));
     }
 
     @Override
@@ -40,5 +42,9 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     @Override
     public Boolean delete(LivestockRecord deletedObject) {
         return null;
+    }
+
+    public LivestockRecord updateSymptoms(LivestockRecord livestockRecord) {
+        return livestockRecordRepository.save(livestockRecord);
     }
 }

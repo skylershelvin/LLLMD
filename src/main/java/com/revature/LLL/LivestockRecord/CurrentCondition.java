@@ -2,6 +2,7 @@ package com.revature.LLL.LivestockRecord;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Setter;
 
 import java.time.LocalDate;
 

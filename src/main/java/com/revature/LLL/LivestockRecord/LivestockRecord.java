@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name="livestock") //livestock table
 public class LivestockRecord {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int entryId;
 
     @ManyToOne

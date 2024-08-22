@@ -19,6 +19,10 @@ public class CurrentConditionConverter implements AttributeConverter<CurrentCond
     @Override
     // takes in CurrentCondition instance and serializes it into a json string to store in database
     public String convertToDatabaseColumn(CurrentCondition condition) {
+        // if LivestockRecord object doesnt have condition yet, return null
+        if(condition == null) {
+            return null;
+        }
         try {
             return objectMapper.writeValueAsString(condition);
         } catch (JsonProcessingException e) {
@@ -28,6 +32,10 @@ public class CurrentConditionConverter implements AttributeConverter<CurrentCond
 
     @Override
     public CurrentCondition convertToEntityAttribute(String dbData) {
+        // if entry from livestock table doesnt have condition yet, return null
+        if(dbData == null) {
+            return null;
+        }
         try {
             return objectMapper.readValue(dbData, CurrentCondition.class);
         } catch (JsonProcessingException e) {
