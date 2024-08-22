@@ -34,7 +34,7 @@ public class LivestockRecordController {
 
     @PostMapping("/symptoms")
     public ResponseEntity<LivestockRecord> postSymptoms(@Valid @RequestBody LivestockRecord livestockRecord, @RequestHeader String userType) {
-        if(!userType.equals("EMPLOYEE")) throw new UnauthorizedException("You must be a vet to add symptoms");
+        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to add symptoms");
 
         LivestockRecord newLivestockRecord = livestockRecordService.create(livestockRecord);
         return ResponseEntity.status(HttpStatus.CREATED).body(newLivestockRecord);
