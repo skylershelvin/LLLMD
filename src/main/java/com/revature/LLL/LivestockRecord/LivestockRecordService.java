@@ -24,7 +24,7 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
 
     @Override
     public LivestockRecord create(LivestockRecord newObject) {
-        return null;
+        return livestockRecordRepository.save(newObject);
     }
 
     @Override

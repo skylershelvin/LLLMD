@@ -1,16 +1,15 @@
 package com.revature.LLL.LivestockRecord;
 
+import com.revature.LLL.util.exceptions.UnauthorizedException;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,4 +32,11 @@ public class LivestockRecordController {
         }
     }
 
+    @PostMapping("/symptoms")
+    public ResponseEntity<LivestockRecord> postSymptoms(@Valid @RequestBody LivestockRecord livestockRecord, @RequestHeader String userType) {
+        if(!userType.equals("EMPLOYEE")) throw new UnauthorizedException("You must be a vet to add symptoms");
+
+        LivestockRecord newLivestockRecord = livestockRecordService.create(livestockRecord);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newLivestockRecord);
+    }
 }
