@@ -1,11 +1,14 @@
 package com.revature.LLL.User;
 
+import com.revature.LLL.User.dtos.UserResponseDTO;
+import com.revature.LLL.util.exceptions.DataNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.revature.LLL.util.interfaces.Serviceable;
 
 import javax.naming.AuthenticationException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements Serviceable<User> {
@@ -42,5 +45,13 @@ public class UserService implements Serviceable<User> {
     @Override
     public Boolean delete(User deletedObject) {
         return null;
+    }
+
+    public List<UserResponseDTO> findAllFarmers() {
+        return userRepository.findByUserType(User.userType.OWNER)
+                .orElseThrow(() -> new DataNotFoundException("No farmers found."))
+                .stream()
+                .map(UserResponseDTO::new)
+                .toList();
     }
 }
