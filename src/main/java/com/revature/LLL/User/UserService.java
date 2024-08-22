@@ -34,7 +34,7 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public User findById(int id) {
-        return null;
+        return userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("No user found with id " + id));
     }
 
     @Override
@@ -47,6 +47,12 @@ public class UserService implements Serviceable<User> {
         return null;
     }
 
+    /**
+     * Retrieves a list of all users with the userType OWNER and converts them to UserResponseDTO objects.
+     *
+     * @return a list of UserResponseDTO objects representing all users with the userType OWNER.
+     * @throws DataNotFoundException if no users with the userType OWNER are found.
+     */
     public List<UserResponseDTO> findAllFarmers() {
         return userRepository.findByUserType(User.userType.OWNER)
                 .orElseThrow(() -> new DataNotFoundException("No farmers found."))
