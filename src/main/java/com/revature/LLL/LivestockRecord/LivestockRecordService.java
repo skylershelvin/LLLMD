@@ -15,10 +15,9 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
         this.livestockRecordRepository = livestockRecordRepository;
     }
 
-    public List<LivestockRecord> getLivestockRecords(int userId) {
-        return livestockRecordRepository.findAllByOwner_UserId(userId);
+    public List<LivestockRecord> findAllByPatientIdentificationOwnerInfoUserId(int userId){
+        return livestockRecordRepository.findAllByPatientIdentificationOwnerInfoUserId(userId);
     }
-
     @Override
     public List<LivestockRecord> findAll() {
         return List.of();

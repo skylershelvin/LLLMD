@@ -24,12 +24,18 @@ public class LivestockRecordController {
         this.livestockRecordService = livestockRecordService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecords(@Valid @RequestHeader int userId) {
+    /**
+     * Get all livestock records for user
+     * @param userId
+     * @return
+     */
+    // localhost:8080/medicalRecord/user?userId=123
+    @GetMapping("/user")
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId) {
         if (userId == 0) {
             return ResponseEntity.badRequest().build();
         } else {
-            return ResponseEntity.ok(livestockRecordService.getLivestockRecords(userId));
+            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
         }
     }
 
