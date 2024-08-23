@@ -6,8 +6,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface LivestockRecordRepository extends JpaRepository<LivestockRecord, Integer> {
-    List<LivestockRecord> findAllByOwner_UserId(int userId);
-
-    List<LivestockRecord> findAllByPatientIdentification_Owner_UserId(int userId);
-
+    // jsonb_extract_path_text is a PostgreSQL function that extracts a text value from a JSON object
+    @Query(value = "SELECT * FROM livestock WHERE jsonb_extract_path_text(patient_identification::jsonb, 'owner_info', 'userId')::INTEGER = :userId;",
+            nativeQuery = true)
+    List<LivestockRecord> findAllByPatientIdentificationOwnerInfoUserId(@Param("userId") int userId);
 }

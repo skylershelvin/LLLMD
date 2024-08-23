@@ -33,13 +33,13 @@ public class LivestockRecordControllerTestSuite {
     private ObjectMapper objectMapper;
 
     @Test
-    public void testGetLivestockRecords() throws Exception {
+    public void testFindAllByPatientIdentificationOwnerInfoUserId() throws Exception {
         // Arrange
         User owner = new User();
         owner.setUserId(1);
 
         PatientIdentification patientIdentity = new PatientIdentification();
-        patientIdentity.setOwner(owner);
+        patientIdentity.setOwnerInfo(owner);
 
         LivestockRecord record1 = new LivestockRecord();
         record1.setPatientIdentification(patientIdentity);
@@ -49,11 +49,11 @@ public class LivestockRecordControllerTestSuite {
 
         List<LivestockRecord> records = Arrays.asList(record1, record2);
 
-        when(livestockRecordService.getLivestockRecords(1)).thenReturn(records);
+        when(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(1)).thenReturn(records);
 
         // Act & Assert
         mockMvc.perform(get("/medicalRecord/user")
-                        .header("userId", 1)
+                        .param("userId", String.valueOf(1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(records)));

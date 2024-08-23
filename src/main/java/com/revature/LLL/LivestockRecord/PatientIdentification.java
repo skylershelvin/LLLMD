@@ -18,8 +18,7 @@ public class PatientIdentification {
     @JsonProperty("sex")
     private Sex sex;
     @JsonProperty("owner_info")
-    @JoinColumn(name = "user_id")
-    private User owner;
+    private User ownerInfo;
 
     public enum Sex {
         MALE, FEMALE
