@@ -13,6 +13,9 @@ public class LivestockHealthConverter implements AttributeConverter<LivestockHea
     @Override
     // takes in CurrentCondition instance and serializes it into a json string to store in database
     public String convertToDatabaseColumn(LivestockHealth livestockHealth) {
+        if(livestockHealth == null) {
+            return null;
+        }
         try {
             return objectMapper.writeValueAsString(livestockHealth);
         } catch (JsonProcessingException e) {
@@ -22,6 +25,9 @@ public class LivestockHealthConverter implements AttributeConverter<LivestockHea
 
     @Override
     public LivestockHealth convertToEntityAttribute(String dbData) {
+        if(dbData == null) {
+            return null;
+        }
         try {
             return objectMapper.readValue(dbData, LivestockHealth.class);
         } catch (JsonProcessingException e) {
