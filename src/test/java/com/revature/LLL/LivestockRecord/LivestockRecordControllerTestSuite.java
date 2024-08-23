@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,5 +58,36 @@ public class LivestockRecordControllerTestSuite {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(records)));
+    }
+
+    @Test
+    public void testUpdateMedicalHistory() throws Exception{
+        // TODO: need a livestock record with animalId = 1 to test this
+
+
+        MedicalHistory medicalHistory = new MedicalHistory();
+        TreatmentPlan treatmentPlan = new TreatmentPlan();
+        treatmentPlan.setAntibiotics(new String[]{"antibiotic1", "antibiotic2"});
+        treatmentPlan.setMedications_prescribed(new String[]{"medication1", "medication2"});
+        treatmentPlan.setTreatment_procedures("procedure1");
+        treatmentPlan.setFollowup_instructions("instructions1");
+
+        medicalHistory.setPrevious_treatments(new TreatmentPlan[]{treatmentPlan});
+        medicalHistory.setPrevious_illnesses(new String[]{"illness1", "illness2"});
+        medicalHistory.setVaccination_history(new String[]{"vaccination1", "vaccination2"});
+
+        LivestockRecord record1 = new LivestockRecord();
+        record1.setMedicalHistory(medicalHistory);
+        record1.setEntryId(1);
+
+        when(livestockRecordService.updateMedicalHistory(record1)).thenReturn(record1);
+
+        mockMvc.perform(patch("/medicalRecord/medicalHistory")
+                        .param("animalId", String.valueOf(1))
+                        .header("userType", "VET")
+                        .content(objectMapper.writeValueAsString(record1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(record1)));
     }
 }
