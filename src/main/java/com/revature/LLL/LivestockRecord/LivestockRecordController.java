@@ -28,24 +28,11 @@ public class LivestockRecordController {
      */
     @GetMapping("/user")
     public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestHeader int userId) {
+        // get user object from header info
         if (userId == 0) {
             return ResponseEntity.badRequest().build();
         } else {
             return ResponseEntity.ok(livestockRecordService.getLivestockRecords(userId));
-        }
-    }
-
-    /**
-     * Get all livestock records for a livestock
-     * @param livestockId
-     * @return
-     */
-    @GetMapping("/livestock")
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByLivestockId(@RequestParam int livestockId) {
-        if (livestockId == 0) {
-            return ResponseEntity.badRequest().build();
-        } else {
-            return ResponseEntity.ok(livestockRecordService.getLivestockRecordsByLivestockId(livestockId));
         }
     }
 

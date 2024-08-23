@@ -2,7 +2,6 @@ package com.revature.LLL.LivestockRecord;
 
 import com.revature.LLL.util.interfaces.Serviceable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -14,7 +13,7 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     }
 
     public List<LivestockRecord> getLivestockRecords(int userId) {
-        return livestockRecordRepository.findAllByOwner_UserId(userId);
+        return livestockRecordRepository.findAllByPatientIdentification_Owner_UserId(userId);
     }
 
     @Override
@@ -40,9 +39,5 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     @Override
     public Boolean delete(LivestockRecord deletedObject) {
         return null;
-    }
-
-    public List<LivestockRecord> getLivestockRecordsByLivestockId(int livestockId) {
-        return livestockRecordRepository.findAllByLivestock_AnimalId(livestockId);
     }
 }
