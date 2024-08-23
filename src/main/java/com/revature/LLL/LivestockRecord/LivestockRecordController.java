@@ -26,13 +26,13 @@ public class LivestockRecordController {
      * @param userId
      * @return
      */
+    // localhost:8080/medicalRecord/user?userId=123
     @GetMapping("/user")
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestHeader int userId) {
-        // get user object from header info
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId) {
         if (userId == 0) {
             return ResponseEntity.badRequest().build();
         } else {
-            return ResponseEntity.ok(livestockRecordService.getLivestockRecords(userId));
+            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
         }
     }
 
