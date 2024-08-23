@@ -44,9 +44,7 @@ public class LivestockRecordController {
     }
 
     @PatchMapping("/symptoms")
-    public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestHeader String userType, @RequestParam int entryId) {
-        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to add symptoms");
-
+    public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int entryId) {
         // check if entry in livestock table exists
         Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findById(entryId));
         if(optionalLivestockRecord.isEmpty()) {
