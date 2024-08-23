@@ -1,8 +1,10 @@
 package com.revature.LLL.FileManagement.FileController;
 
 import com.revature.LLL.FileManagement.DataService.DataService;
+import com.revature.LLL.FileManagement.DataServiceImpl.DataServiceImpl;
 import com.revature.LLL.FileManagement.Repository.FileRepo;
 import com.revature.LLL.FileManagement.UploadingService.UploadingService;
+import com.revature.LLL.FileManagement.UploadingServiceImpl.UploadingServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import com.revature.LLL.FileManagement.File.*;
@@ -17,14 +19,20 @@ import java.util.List;
 @RequestMapping("/file")
 public class FileController {
 
-    @Autowired
-    UploadingService uploadingService;
 
-    @Autowired
-    DataService dataService;
+    private final UploadingService uploadingService;
 
-    @Autowired
-    FileRepo fileRepo;
+    private final DataService dataService;
+
+
+    public FileController(UploadingService uploadingService, DataService dataService) {
+        this.uploadingService = uploadingService;
+        this.dataService = dataService;
+    }
+
+
+
+
 
     //optional since front end will have the uploading page
     //this is for testing purposes
@@ -51,8 +59,8 @@ public class FileController {
 
     @GetMapping("/saveData")
     public String saveData(Model model){
-        List<File> fileDataList = dataService.getFileDataList();
-        int noOfRecords = dataService.saveData(fileDataList);
+        List<UploadedFile> uploadedFileDataList = dataService.getFileDataList();
+        int noOfRecords = dataService.saveData(uploadedFileDataList);
         model.addAttribute("noOfRecords", noOfRecords);
         return "success";
     }

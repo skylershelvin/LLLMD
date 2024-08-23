@@ -1,11 +1,11 @@
 package com.revature.LLL.FileManagement.DataService;
 
-import com.revature.LLL.FileManagement.File.File;
+import com.revature.LLL.FileManagement.File.UploadedFile;
 
 import java.util.List;
 
 public interface DataService {
-    List<File> getFileDataList();
+    List<UploadedFile> getFileDataList();
 
-    int saveData(List<File> fileDataList);
+    int saveData(List<UploadedFile> uploadedFileDataList);
 }

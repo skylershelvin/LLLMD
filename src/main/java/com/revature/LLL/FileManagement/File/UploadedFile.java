@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
-public class File {
+public class UploadedFile {
 
     @Id
     @GeneratedValue
@@ -14,7 +14,7 @@ public class File {
     private String getPreviousTreatments;
     private String vaccinationHistory;
 
-    public File() {
+    public UploadedFile() {
 
     }
 
@@ -52,7 +52,7 @@ public class File {
 
     @Override
     public String toString() {
-        return "File{" +
+        return "UploadedFile{" +
                 "id=" + id +
                 ", previousIllnesses='" + previousIllnesses + '\'' +
                 ", getPreviousTreatments='" + getPreviousTreatments + '\'' +
@@ -60,7 +60,7 @@ public class File {
                 '}';
     }
 
-    public File(Long id, String previousIllnesses, String getPreviousTreatments, String vaccinationHistory) {
+    public UploadedFile(Long id, String previousIllnesses, String getPreviousTreatments, String vaccinationHistory) {
         super();
         this.id = id;
         this.previousIllnesses = previousIllnesses;
