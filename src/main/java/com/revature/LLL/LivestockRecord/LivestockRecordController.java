@@ -22,18 +22,51 @@ public class LivestockRecordController {
     }
 
     /**
+     * Get all livestock record by entry ID
+     * @param entryId
+     * @return
+     */
+    @GetMapping("/entry")
+    public ResponseEntity<LivestockRecord> getLivestockRecordByEntryId(@Valid @RequestParam int entryId) {
+        if (entryId == 0) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(livestockRecordService.findById(entryId));
+        }
+    }
+
+    /**
      * Get all livestock records for user
      * @param userId
+     * @param userType
      * @return
      */
     // localhost:8080/medicalRecord/user?userId=123
     @GetMapping("/user")
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId) {
-        if (userId == 0) {
-            return ResponseEntity.badRequest().build();
-        } else {
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId, @RequestHeader String userType) {
+        if (userType.equals("VET")) {
+            return ResponseEntity.ok(livestockRecordService.findAllByVetRecordVetDetailsUserId(userId));
+        } else if (userType.equals("OWNER")) {
             return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
+        } else {
+            return ResponseEntity.badRequest().build();
         }
     }
+
+    /**
+     * Get all livestock record by animal ID
+     * @param animalId
+     * @return
+     */
+    @GetMapping("/animal")
+    public ResponseEntity<LivestockRecord> getLivestockRecordByAnimalId(@Valid @RequestParam int animalId) {
+        if (animalId == 0) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
+        }
+    }
+
+
 
 }

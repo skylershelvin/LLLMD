@@ -12,9 +12,6 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
         this.livestockRecordRepository = livestockRecordRepository;
     }
 
-    public List<LivestockRecord> findAllByPatientIdentificationOwnerInfoUserId(int userId){
-        return livestockRecordRepository.findAllByPatientIdentificationOwnerInfoUserId(userId);
-    }
     @Override
     public List<LivestockRecord> findAll() {
         return List.of();
@@ -27,7 +24,7 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
 
     @Override
     public LivestockRecord findById(int id) {
-        return null;
+        return livestockRecordRepository.findAllByEntryId(id);
     }
 
     @Override
@@ -39,4 +36,18 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     public Boolean delete(LivestockRecord deletedObject) {
         return null;
     }
+
+    public List<LivestockRecord> findAllByVetRecordVetDetailsUserId(int userId){
+        return livestockRecordRepository.findAllByVetRecordVetDetailsUserId(userId);
+    }
+
+    public List<LivestockRecord> findAllByPatientIdentificationOwnerInfoUserId(int userId){
+        return livestockRecordRepository.findAllByPatientIdentificationOwnerInfoUserId(userId);
+    }
+
+    public LivestockRecord findByPatientIdentificationAnimalId(int animalId) {
+        return livestockRecordRepository.findAllByPatientIdentificationAnimalId(animalId);
+    }
+
+
 }

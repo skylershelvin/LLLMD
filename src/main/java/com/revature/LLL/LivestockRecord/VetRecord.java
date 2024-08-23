@@ -9,9 +9,9 @@ import java.time.LocalDate;
 @Data
 public class VetRecord {
     @JsonProperty("vet_details")
-    private User vet_details;
+    private User vetDetails;
     @JsonProperty("record_date")
-    private LocalDate record_date;
+    private LocalDate recordDate;
     @JsonProperty("signature")
     private String signature;
 }
