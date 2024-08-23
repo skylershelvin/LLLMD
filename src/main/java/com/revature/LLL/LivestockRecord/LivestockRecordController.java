@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,15 @@ public class LivestockRecordController {
         }
     }
 
+    @GetMapping("/animal")
+    public ResponseEntity<LivestockRecord> getLivestockRecordByAnimalId(@Valid @RequestParam int animalId) {
+        if (animalId == 0) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(livestockRecordService.findByAnimalId(animalId));
+        }
+    }
+
     @PatchMapping("/symptoms")
     public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int entryId) {
         // check if entry in livestock table exists
@@ -70,6 +80,39 @@ public class LivestockRecordController {
         condition.setSymptoms(symptoms);
         livestockRecord.setCondition(condition);
         livestockRecordService.updateSymptoms(livestockRecord);
+
+        return ResponseEntity.ok(livestockRecord);
+    }
+
+    /*
+    request body example:
+    {
+        "previous_illnesses": ["covid", "ebola"],
+        "previous_treatments": [{
+            "medications_prescribed": ["tylenol", "ibuprofen"]
+        }],
+        "vaccination_history": ["moderna", "pfizer"]
+    }
+     */
+    @PatchMapping("/medicalHistory")
+    public ResponseEntity<LivestockRecord> updateMedicalHistory(@Valid @RequestBody MedicalHistory medicalHistory, @RequestParam int animalId, @RequestHeader String userType){
+        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to add symptoms");
+
+        // check if entry in livestock table exists
+        Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByAnimalId(animalId));
+        if(optionalLivestockRecord.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        LivestockRecord livestockRecord = optionalLivestockRecord.get();
+        MedicalHistory currentMedicalHistory = livestockRecord.getMedicalHistory();
+
+        // update medical history json in livestock object and update the database record
+        currentMedicalHistory.setPrevious_illnesses(medicalHistory.getPrevious_illnesses());
+        currentMedicalHistory.setVaccination_history(medicalHistory.getVaccination_history());
+        currentMedicalHistory.setPrevious_treatments(medicalHistory.getPrevious_treatments());
+
+        livestockRecord.setMedicalHistory(currentMedicalHistory);
+        livestockRecordService.updateMedicalHistory(livestockRecord);
 
         return ResponseEntity.ok(livestockRecord);
     }
