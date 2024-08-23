@@ -39,7 +39,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable int userId, @RequestHeader("userId") String parseId){
         try{
             int headerId = Integer.parseInt(parseId);
