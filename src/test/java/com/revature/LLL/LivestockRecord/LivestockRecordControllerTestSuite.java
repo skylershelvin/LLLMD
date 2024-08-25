@@ -14,7 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -62,9 +63,7 @@ public class LivestockRecordControllerTestSuite {
 
     @Test
     public void testUpdateMedicalHistory() throws Exception{
-        // TODO: need a livestock record with animalId = 1 to test this
-
-
+        // set up MedicalHistory and TreatmentPlan objects to use during the patch
         MedicalHistory medicalHistory = new MedicalHistory();
         TreatmentPlan treatmentPlan = new TreatmentPlan();
         treatmentPlan.setAntibiotics(new String[]{"antibiotic1", "antibiotic2"});
@@ -76,10 +75,24 @@ public class LivestockRecordControllerTestSuite {
         medicalHistory.setPrevious_illnesses(new String[]{"illness1", "illness2"});
         medicalHistory.setVaccination_history(new String[]{"vaccination1", "vaccination2"});
 
+        // set up PatientIdentification object to be used to find which record to update via animal_id
+        PatientIdentification mockPatientIdentification = new PatientIdentification();
+        mockPatientIdentification.setAnimal_id(1);
+        mockPatientIdentification.setBreed("dog");
+        mockPatientIdentification.setAge(5);
+        mockPatientIdentification.setSex(PatientIdentification.Sex.MALE);
+        mockPatientIdentification.setOwnerInfo(new User(1, "John", "Doe", "john@mail.com", "johnpw", User.userType.VET));
+
+
+
         LivestockRecord record1 = new LivestockRecord();
         record1.setMedicalHistory(medicalHistory);
-        record1.setEntryId(1);
+        record1.setPatientIdentification(mockPatientIdentification);
 
+        // return the record1 which has animal_id = 1, needed because the patch request needs to find the record to update
+        when(livestockRecordService.findByAnimalId(1)).thenReturn(record1);
+
+        // return the record1 after updating the medical history
         when(livestockRecordService.updateMedicalHistory(record1)).thenReturn(record1);
 
         mockMvc.perform(patch("/medicalRecord/medicalHistory")
@@ -88,6 +101,8 @@ public class LivestockRecordControllerTestSuite {
                         .content(objectMapper.writeValueAsString(record1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(record1)));
+                .andExpect(content().json(objectMapper.writeValueAsString(record1)));   // expects record1 to be returned after updating the medical history
+
+        verify(livestockRecordService, times(1)).updateMedicalHistory(record1);
     }
 }
