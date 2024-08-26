@@ -35,16 +35,16 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     }
 
     @Override
-    public Boolean update(LivestockRecord updatedObject) {
-        return null;
-    }
-
-    @Override
     public Boolean delete(LivestockRecord deletedObject) {
         return null;
     }
 
     public LivestockRecord updateSymptoms(LivestockRecord livestockRecord) {
         return livestockRecordRepository.save(livestockRecord);
+    }
+
+    @Override
+    public LivestockRecord update(LivestockRecord updatedObject) {
+        return null;
     }
 }
