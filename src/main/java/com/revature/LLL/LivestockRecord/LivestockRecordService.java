@@ -38,6 +38,10 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
         return livestockRecordRepository.findByEntryId(entryId).orElseThrow(() -> new DataNotFoundException("No entry found with that entryId"));
     }
 
+    @Override
+    public LivestockRecord update(LivestockRecord updatedObject) {
+        return null;
+    }
 
 
     @Override
