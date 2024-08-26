@@ -15,8 +15,12 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
         this.livestockRecordRepository = livestockRecordRepository;
     }
 
-    public List<LivestockRecord> getLivestockRecords(int userId) {
-        return livestockRecordRepository.findAllByOwner_UserId(userId);
+    public List<LivestockRecord> findAllByPatientIdentificationOwnerInfoUserId(int userId){
+        return livestockRecordRepository.findAllByPatientIdentificationOwnerInfoUserId(userId);
+    }
+
+    public LivestockRecord findByAnimalId(int animalId) throws DataNotFoundException {
+        return livestockRecordRepository.findByPatientidentificationOwnerInfoAnimalId(animalId).orElseThrow(() -> new DataNotFoundException("No entry found with that animalId"));
     }
 
     @Override
@@ -34,6 +38,8 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
         return livestockRecordRepository.findByEntryId(entryId).orElseThrow(() -> new DataNotFoundException("No entry found with that entryId"));
     }
 
+
+
     @Override
     public Boolean delete(LivestockRecord deletedObject) {
         return null;
@@ -42,9 +48,8 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     public LivestockRecord updateSymptoms(LivestockRecord livestockRecord) {
         return livestockRecordRepository.save(livestockRecord);
     }
-
-    @Override
-    public LivestockRecord update(LivestockRecord updatedObject) {
-        return null;
+  
+    public LivestockRecord updateMedicalHistory(LivestockRecord livestockRecord) {
+        return livestockRecordRepository.save(livestockRecord);
     }
 }
