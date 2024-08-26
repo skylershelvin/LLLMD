@@ -1,5 +1,6 @@
 package com.revature.LLL.User;
 
+import com.revature.LLL.User.dtos.UserResponseDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.exceptions.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
