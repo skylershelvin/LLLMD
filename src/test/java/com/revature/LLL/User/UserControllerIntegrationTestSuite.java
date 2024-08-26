@@ -18,7 +18,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Optional;
 
-
+/**
+ * Integration tests for the UserController class.
+ *
+ * These tests cover post, get and put requests
+ */
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,6 +43,11 @@ public class UserControllerIntegrationTestSuite {
     HttpHeaders headers;
     User mockUser;
 
+    /**
+     * Sets up the testing environment by initializing headers and mock user data.
+     *
+     * Whenever findById is called with input 1, return mockUser for future tests.
+     */
     @BeforeEach
     public void setup(){
         headers = new HttpHeaders();
@@ -55,7 +64,12 @@ public class UserControllerIntegrationTestSuite {
         Mockito.when(userRepository.findById(1)).thenReturn(Optional.of(mockUser));
     }
 
-    // Register
+    /**
+     * Tests the registration of a new user with valid input.
+     * expects user with valid input to return a status 201
+     *
+     * @throws Exception if request fails
+     */
     @Test
     public void whenPostRequestValidUserThenCorrectResponse() throws Exception {
         // user successfully registers with all their info
@@ -88,6 +102,13 @@ public class UserControllerIntegrationTestSuite {
                 .andExpect(MockMvcResultMatchers.status().is(201));
     }
 
+    /**
+     * Tests the registration of a user when no email is provided.
+     * Test expects it to return status 400 checking authorization is working
+     * when given no email.
+     *
+     * @throws Exception if request fails
+     */
     @Test
     public void whenPostRequestNoEmailThenError() throws Exception {
         // user neglects to input an email.
@@ -107,6 +128,13 @@ public class UserControllerIntegrationTestSuite {
                 .andExpect(MockMvcResultMatchers.status().is(400));
     }
 
+    /**
+     * Tests the registration of a user when no password is provided.
+     * Test expects it to return status 400 checking authorization is working
+     * when given no password.
+     *
+     * @throws Exception if request fails
+     */
     @Test
     public void whenPostRequestNoPasswordThenError() throws Exception{
         // user neglects to input a password
@@ -125,7 +153,12 @@ public class UserControllerIntegrationTestSuite {
                 .andExpect(MockMvcResultMatchers.status().is(400));
     }
 
-    // GET by ID
+    /**
+     * Tests a successful GET request to retrieve user data.
+     * Test checks to see if status 200 is received  to view their profile.
+     *
+     * @throws Exception if request  fails
+     */
     @Test
     public void whenGetRequestValidThenCorrectResponse() throws Exception{
         // user 1 trying to view their own profile
@@ -137,6 +170,12 @@ public class UserControllerIntegrationTestSuite {
                 .andReturn();
     }
 
+    /**
+     * Tests an unauthorized GET request to retrieve a users profile.
+     * Test checks to see if status 403 is received ensuring invalid input returns a failed request
+     *
+     * @throws Exception if request fails
+     */
     @Test
     public void whenGetRequestInvalidThenIncorrectResponse() throws Exception {
         // user 2 trying to view user 1's profile
@@ -148,7 +187,12 @@ public class UserControllerIntegrationTestSuite {
     }
 
 
-    // PUT new info
+    /**
+     * Tests a successful PUT request to update a user's info.
+     * Test checks to see of status 200 is received when updating
+     *
+     * @throws Exception if request fails
+     */
     @Test
     public void whenPutRequestValidThenUpdateInfo() throws Exception {
         // user updates their own info
