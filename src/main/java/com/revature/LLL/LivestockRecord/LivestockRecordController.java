@@ -60,9 +60,9 @@ public class LivestockRecordController {
     }
 
     @PatchMapping("/symptoms")
-    public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int entryId) {
-        // check if entry in livestock table exists
-        Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findById(entryId));
+    public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
+        // check if entry in livestock table exists via animal_id
+        Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByAnimalId(animalId));
         if(optionalLivestockRecord.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

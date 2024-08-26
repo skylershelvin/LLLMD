@@ -62,6 +62,49 @@ public class LivestockRecordControllerTestSuite {
     }
 
     @Test
+    public void testFindByAnimalId() throws Exception{
+        int animalId = 1;
+        PatientIdentification patientIdentification = new PatientIdentification();
+        patientIdentification.setAnimal_id(animalId);
+        LivestockRecord record = new LivestockRecord();
+        record.setPatientIdentification(patientIdentification);
+
+        when(livestockRecordService.findByAnimalId(animalId)).thenReturn(record);
+        mockMvc.perform(get("/medicalRecord/animal")
+                        .param("animalId", String.valueOf(animalId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(record)));
+        verify(livestockRecordService, times(1)).findByAnimalId(animalId);
+    }
+
+    @Test
+    public void testUpdateSymptoms() throws Exception {
+        // Arrange
+        String[] newSymptoms = new String[]{"symptom3", "symptom4"};
+
+        CurrentCondition condition = new CurrentCondition();
+        condition.setSymptoms(newSymptoms);
+
+        LivestockRecord record1 = new LivestockRecord();
+        record1.setCondition(condition);
+        record1.setPatientIdentification(new PatientIdentification());
+        record1.getPatientIdentification().setAnimal_id(1);
+
+        when(livestockRecordService.findByAnimalId(1)).thenReturn(record1);
+        when(livestockRecordService.updateSymptoms(eq(record1))).thenReturn(record1);
+
+        // Act & Assert
+        mockMvc.perform(patch("/medicalRecord/symptoms")
+                        .param("animalId", String.valueOf(1))
+                        .content(objectMapper.writeValueAsString(newSymptoms))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(record1)));
+        verify(livestockRecordService, times(1)).findByAnimalId(1);
+        verify(livestockRecordService, times(1)).updateSymptoms(record1);
+    }
+    @Test
     public void testUpdateMedicalHistory() throws Exception{
         // set up MedicalHistory and TreatmentPlan objects to use during the patch
         MedicalHistory medicalHistory = new MedicalHistory();
