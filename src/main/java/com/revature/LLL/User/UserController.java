@@ -83,9 +83,4 @@ public class UserController {
     public ResponseEntity<List<UserResponseDTO>> getAllFarmers(){
         return ResponseEntity.ok(userService.findAllFarmers());
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable int id) {
-        return ResponseEntity.ok(userService.findById(id));
-    }
 }
