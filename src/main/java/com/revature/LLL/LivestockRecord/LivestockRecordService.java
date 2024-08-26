@@ -41,11 +41,6 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
 
 
     @Override
-    public Boolean update(LivestockRecord updatedObject) {
-        return null;
-    }
-
-    @Override
     public Boolean delete(LivestockRecord deletedObject) {
         return null;
     }
@@ -53,7 +48,7 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     public LivestockRecord updateSymptoms(LivestockRecord livestockRecord) {
         return livestockRecordRepository.save(livestockRecord);
     }
-
+  
     public LivestockRecord updateMedicalHistory(LivestockRecord livestockRecord) {
         return livestockRecordRepository.save(livestockRecord);
     }

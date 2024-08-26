@@ -2,12 +2,15 @@ package com.revature.LLL.User;
 
 import com.revature.LLL.User.dtos.UserResponseDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
+import com.revature.LLL.util.exceptions.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.revature.LLL.util.interfaces.Serviceable;
 
 import javax.naming.AuthenticationException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -28,18 +31,27 @@ public class UserService implements Serviceable<User> {
     }
 
     @Override
-    public User create(User newUser) {
+    public User create(User newUser) throws InvalidInputException {
+        if(newUser.getEmail() == null || newUser.getPassword() == null){
+            throw new InvalidInputException("User must contain an email and password");
+        }
+
         return userRepository.saveAndFlush(newUser);
     }
 
     @Override
-    public User findById(int id) {
-        return userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("No user found with id " + id));
+    public User findById(int id){
+        try{
+            return userRepository.findById(id).get();
+        } catch(NoSuchElementException e){
+            throw new DataNotFoundException("No such user with that id found");
+        }
+
     }
 
     @Override
-    public Boolean update(User updatedObject) {
-        return null;
+    public User update(User updatedUser) {
+        return userRepository.save(updatedUser);
     }
 
     @Override

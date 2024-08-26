@@ -2,6 +2,7 @@ package com.revature.LLL.User;
 
 import com.revature.LLL.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
