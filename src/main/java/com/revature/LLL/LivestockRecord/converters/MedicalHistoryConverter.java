@@ -13,6 +13,9 @@ public class MedicalHistoryConverter implements AttributeConverter<MedicalHistor
     @Override
     // takes in CurrentCondition instance and serializes it into a json string to store in database
     public String convertToDatabaseColumn(MedicalHistory medicalHistory) {
+        if(medicalHistory == null) {
+            return null;
+        }
         try {
             return objectMapper.writeValueAsString(medicalHistory);
         } catch (JsonProcessingException e) {
@@ -22,6 +25,9 @@ public class MedicalHistoryConverter implements AttributeConverter<MedicalHistor
 
     @Override
     public MedicalHistory convertToEntityAttribute(String dbData) {
+        if(dbData == null) {
+            return null;
+        }
         try {
             return objectMapper.readValue(dbData, MedicalHistory.class);
         } catch (JsonProcessingException e) {
