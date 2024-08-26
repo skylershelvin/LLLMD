@@ -12,6 +12,9 @@ public class AdditionalNotesConverter implements AttributeConverter<AdditionalNo
     @Override
     // takes in CurrentCondition instance and serializes it into a json string to store in database
     public String convertToDatabaseColumn(AdditionalNotes additionalNotes) {
+        if(additionalNotes == null) {
+            return null;
+        }
         try {
             return objectMapper.writeValueAsString(additionalNotes);
         } catch (JsonProcessingException e) {
@@ -21,6 +24,9 @@ public class AdditionalNotesConverter implements AttributeConverter<AdditionalNo
 
     @Override
     public AdditionalNotes convertToEntityAttribute(String dbData) {
+        if(dbData == null) {
+            return null;
+        }
         try {
             return objectMapper.readValue(dbData, AdditionalNotes.class);
         } catch (JsonProcessingException e) {

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
@@ -75,5 +77,15 @@ public class UserController {
                     .status(404)
                     .build();
         }
+    }
+
+    @GetMapping("/farmers")
+    public ResponseEntity<List<UserResponseDTO>> getAllFarmers(){
+        return ResponseEntity.ok(userService.findAllFarmers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        return ResponseEntity.ok(userService.findById(id));
     }
 }

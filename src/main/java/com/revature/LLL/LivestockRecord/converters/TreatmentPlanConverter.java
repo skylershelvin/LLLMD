@@ -13,6 +13,9 @@ public class TreatmentPlanConverter implements AttributeConverter<TreatmentPlan,
     @Override
     // takes in CurrentCondition instance and serializes it into a json string to store in database
     public String convertToDatabaseColumn(TreatmentPlan treatmentPlan) {
+        if (treatmentPlan == null) {
+            return null;
+        }
         try {
             return objectMapper.writeValueAsString(treatmentPlan);
         } catch (JsonProcessingException e) {
@@ -22,6 +25,9 @@ public class TreatmentPlanConverter implements AttributeConverter<TreatmentPlan,
 
     @Override
     public TreatmentPlan convertToEntityAttribute(String dbData) {
+        if(dbData == null) {
+            return null;
+        }
         try {
             return objectMapper.readValue(dbData, TreatmentPlan.class);
         } catch (JsonProcessingException e) {
