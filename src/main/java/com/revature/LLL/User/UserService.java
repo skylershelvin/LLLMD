@@ -13,23 +13,58 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * UserService provides business logic for user operations such as creating a user,
+ * finding a user by email in password for authenthication, and conversion of user info
+ * into other form of data through DTO's
+ *
+ * It interacts with the UserRepository to perform database interactions
+ */
 @Service
 public class UserService implements Serviceable<User> {
     private final UserRepository userRepository;
 
+    /**
+     * Constructor for UserService. The UserRepository is injected through constructor injection.
+     *
+     * @param userRepository the repository that handles database interactions
+     */
     @Autowired
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
     }
 
+    /**
+     * Authenticates a user by providing email and password
+     *
+     * @param email    the email of the user attempting to log in
+     * @param password the password of the user attempting to log in
+     * @return the User object if the email and password are correct otherwise throws exception
+     * @throws AuthenticationException gets thrown if email or password are incorrect
+     */
     public User findByEmailAndPassword(String email, String password) throws AuthenticationException{
         return userRepository.findByEmailAndPassword(email, password).orElseThrow(() -> new AuthenticationException("Incorrect email or password."));
     }
+
+    /**
+     * Only implemented since its part of servicable interface
+     *
+     * might be implemented later
+     *
+     * @return nothing
+     */
     @Override
     public List<User> findAll() {
         return List.of();
     }
 
+    /**
+     * Creates a new user and saves it to the database.
+     *
+     * @param newUser the User object to be created
+     * @return the created User object after being saved to database
+     * @throws InvalidInputException if the User object does not contain an email or password
+     */
     @Override
     public User create(User newUser) throws InvalidInputException {
         if(newUser.getEmail() == null || newUser.getPassword() == null){
@@ -39,6 +74,13 @@ public class UserService implements Serviceable<User> {
         return userRepository.saveAndFlush(newUser);
     }
 
+    /**
+     * Finds a user by providing a id
+     *
+     * @param id the id given to find user
+     * @return a user that matches given id
+     * @throws if no user is found with provided id
+     */
     @Override
     public User findById(int id){
         try{
@@ -49,11 +91,25 @@ public class UserService implements Serviceable<User> {
 
     }
 
+    /**
+     * Updates an existing user into the database
+     *
+     * @param updatedUser the User object containing updated info
+     * @return the updated User object after being saved to database
+     */
     @Override
     public User update(User updatedUser) {
         return userRepository.save(updatedUser);
     }
 
+    /**
+     * Deletes a user from the database.
+     *
+     * not yet implemented
+     *
+     * @param deletedObject the User object to be deleted
+     * @return a boolean seeing if delete was successful or not
+     */
     @Override
     public Boolean delete(User deletedObject) {
         return null;
