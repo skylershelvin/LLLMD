@@ -24,18 +24,14 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<User> postNewUser(@RequestBody User user){
         try{
-            User newUser = userService.create(user);
-
             return ResponseEntity
                     .status(201)
-                    .header("userId", String.valueOf(newUser.getUserId()))
-                    .header("userType", String.valueOf(newUser.getUserType()))
-                    .build();
+                    .body(userService.create(user));
 
         } catch (InvalidInputException e){
             return ResponseEntity
                     .status(400)
-                    .build();
+                    .body(user);
         }
     }
 

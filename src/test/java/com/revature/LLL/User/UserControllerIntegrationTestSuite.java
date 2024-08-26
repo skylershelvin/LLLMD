@@ -2,6 +2,7 @@ package com.revature.LLL.User;
 
 
 
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,14 +64,28 @@ public class UserControllerIntegrationTestSuite {
         // user successfully registers with all their info
         String validUser =
                 "{\n" +
-                        "\"firstName\": \"John\",\n" +
-                        "\"lastName\": \"Doe\",\n" +
-                        "\"email\": \"test2@email.com\",\n" +
-                        "\"password\": \"password\"\n" +
+                        "\"firstName\": \"test\",\n" +
+                        "\"lastName\": \"user\",\n" +
+                        "\"email\": \"test1@email.com\",\n" +
+                        "\"password\": \"password\",\n" +
+                        "\"userType\": \"VET\"\n" +
                 "}";
 
+        User tempUser = new User();
+        tempUser.setFirstName("test");
+        tempUser.setLastName("user");
+        tempUser.setEmail("test1@email.com");
+        tempUser.setPassword("password");
+
+        User newUser = new User();
+        newUser.setUserId(1);
+        newUser.setFirstName("test");
+        newUser.setLastName("user");
+        newUser.setEmail("test1@email.com");
+        newUser.setPassword("password");
+        Mockito.when(userRepository.saveAndFlush(tempUser)).thenReturn(newUser);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
-                .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(validUser))
                 .andExpect(MockMvcResultMatchers.status().is(201));
@@ -146,7 +161,7 @@ public class UserControllerIntegrationTestSuite {
                         "\"firstName\": \"Jane\",\n" +
                         "\"lastName\": \"Doe\",\n" +
                         "\"email\": \"test2@email.com\",\n" +
-                        "\"password\": \"password\"\n" +
+                        "\"password\": \"password\",\n" +
                         "\"userType\": \"VET\"\n" +
                 "}";
 
