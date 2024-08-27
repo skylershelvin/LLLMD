@@ -4,6 +4,7 @@ import com.revature.LLL.User.dtos.UserResponseDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.exceptions.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.revature.LLL.util.interfaces.Serviceable;
 
@@ -23,6 +24,8 @@ import java.util.Optional;
 @Service
 public class UserService implements Serviceable<User> {
     private final UserRepository userRepository;
+    //including Passwordencoder spring bean here, this function comes from SecurityConfig file on line 46
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Constructor for UserService. The UserRepository is injected through constructor injection.
@@ -30,8 +33,9 @@ public class UserService implements Serviceable<User> {
      * @param userRepository the repository that handles database interactions
      */
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -70,7 +74,8 @@ public class UserService implements Serviceable<User> {
         if(newUser.getEmail() == null || newUser.getPassword() == null){
             throw new InvalidInputException("User must contain an email and password");
         }
-
+        //hashing and salting users password here before it gets saved to the database
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         return userRepository.saveAndFlush(newUser);
     }
 
