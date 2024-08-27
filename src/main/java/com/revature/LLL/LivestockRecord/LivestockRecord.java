@@ -1,7 +1,6 @@
 package com.revature.LLL.LivestockRecord;
 
 import com.revature.LLL.LivestockRecord.converters.*;
-import com.revature.LLL.User.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,11 +13,11 @@ import lombok.NoArgsConstructor;
 @Table(name="livestock") //livestock table
 public class LivestockRecord {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int entryId;
 
-    @ManyToOne
-    private User owner;
+    @Convert(converter = PatientIdentificationConverter.class)
+    private PatientIdentification patientIdentification;
 
     @Convert(converter= MedicalHistoryConverter.class)
     private MedicalHistory medicalHistory;
