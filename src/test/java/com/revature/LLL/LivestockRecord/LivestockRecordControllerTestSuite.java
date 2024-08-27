@@ -165,17 +165,17 @@ public class LivestockRecordControllerTestSuite {
     public void testFindByAnimalId() throws Exception{
         int animalId = 1;
         PatientIdentification patientIdentification = new PatientIdentification();
-        patientIdentification.setAnimal_id(animalId);
+        patientIdentification.setAnimalId(animalId);
         LivestockRecord record = new LivestockRecord();
         record.setPatientIdentification(patientIdentification);
 
-        when(livestockRecordService.findByAnimalId(animalId)).thenReturn(record);
+        when(livestockRecordService.findByPatientIdentificationAnimalId(animalId)).thenReturn(record);
         mockMvc.perform(get("/medicalRecord/animal")
                         .param("animalId", String.valueOf(animalId))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(record)));
-        verify(livestockRecordService, times(1)).findByAnimalId(animalId);
+        verify(livestockRecordService, times(1)).findByPatientIdentificationAnimalId(animalId);
     }
 
     @Test
@@ -189,9 +189,9 @@ public class LivestockRecordControllerTestSuite {
         LivestockRecord record1 = new LivestockRecord();
         record1.setCondition(condition);
         record1.setPatientIdentification(new PatientIdentification());
-        record1.getPatientIdentification().setAnimal_id(1);
+        record1.getPatientIdentification().setAnimalId(1);
 
-        when(livestockRecordService.findByAnimalId(1)).thenReturn(record1);
+        when(livestockRecordService.findByPatientIdentificationAnimalId(1)).thenReturn(record1);
         when(livestockRecordService.updateSymptoms(eq(record1))).thenReturn(record1);
 
         // Act & Assert
@@ -201,7 +201,7 @@ public class LivestockRecordControllerTestSuite {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(record1)));
-        verify(livestockRecordService, times(1)).findByAnimalId(1);
+        verify(livestockRecordService, times(1)).findByPatientIdentificationAnimalId(1);
         verify(livestockRecordService, times(1)).updateSymptoms(record1);
     }
     @Test
@@ -220,7 +220,7 @@ public class LivestockRecordControllerTestSuite {
 
         // set up PatientIdentification object to be used to find which record to update via animal_id
         PatientIdentification mockPatientIdentification = new PatientIdentification();
-        mockPatientIdentification.setAnimal_id(1);
+        mockPatientIdentification.setAnimalId(1);
         mockPatientIdentification.setBreed("dog");
         mockPatientIdentification.setAge(5);
         mockPatientIdentification.setSex(PatientIdentification.Sex.MALE);
@@ -233,7 +233,7 @@ public class LivestockRecordControllerTestSuite {
         record1.setPatientIdentification(mockPatientIdentification);
 
         // return the record1 which has animal_id = 1, needed because the patch request needs to find the record to update
-        when(livestockRecordService.findByAnimalId(1)).thenReturn(record1);
+        when(livestockRecordService.findByPatientIdentificationAnimalId(1)).thenReturn(record1);
 
         // return the record1 after updating the medical history
         when(livestockRecordService.updateMedicalHistory(record1)).thenReturn(record1);

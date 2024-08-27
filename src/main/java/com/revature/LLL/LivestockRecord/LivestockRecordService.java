@@ -4,7 +4,6 @@ import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.interfaces.Serviceable;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,14 +13,6 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
 
     public LivestockRecordService(LivestockRecordRepository livestockRecordRepository){
         this.livestockRecordRepository = livestockRecordRepository;
-    }
-
-    public List<LivestockRecord> findAllByPatientIdentificationOwnerInfoUserId(int userId){
-        return livestockRecordRepository.findAllByPatientIdentificationOwnerInfoUserId(userId);
-    }
-
-    public LivestockRecord findByAnimalId(int animalId) throws DataNotFoundException {
-        return livestockRecordRepository.findByPatientidentificationOwnerInfoAnimalId(animalId).orElseThrow(() -> new DataNotFoundException("No entry found with that animalId"));
     }
 
     @Override
@@ -47,7 +38,7 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     }
 
     @Override
-    public Boolean update(LivestockRecord updatedObject) {
+    public LivestockRecord update(LivestockRecord updatedObject) {
         return null;
     }
 
@@ -89,8 +80,9 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
         return record.orElseThrow(() -> new DataNotFoundException("No livestock found with that animalId"));
     }
 
-    public void updateSymptoms(LivestockRecord livestockRecord) {
-        livestockRecordRepository.save(livestockRecord);
+    public LivestockRecord updateSymptoms(LivestockRecord livestockRecord) {
+
+        return livestockRecordRepository.save(livestockRecord);
     }
 
     public LivestockRecord updateMedicalHistory(LivestockRecord livestockRecord) {
