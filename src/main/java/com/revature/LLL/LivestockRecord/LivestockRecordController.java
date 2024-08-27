@@ -71,6 +71,41 @@ public class LivestockRecordController {
         }
     }
 
+    @PostMapping("/animal")
+    public ResponseEntity<LivestockRecord> createLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord, @RequestParam String userType) {
+        // check if userType is vet
+        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to insert a livestock entry");
+
+        System.out.println(livestockRecord);
+        // livestock record must have a vet record and patient identification
+        if(livestockRecord.getVetRecord() == null || livestockRecord.getPatientIdentification() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // fill out new livestock record with values present in the request body
+        LivestockRecord newLivestockRecord = new LivestockRecord();
+        newLivestockRecord.setPatientIdentification(livestockRecord.getPatientIdentification());
+        newLivestockRecord.setVetRecord(livestockRecord.getVetRecord());
+
+        if(livestockRecord.getMedicalHistory() != null) {
+            newLivestockRecord.setMedicalHistory(livestockRecord.getMedicalHistory());
+        }
+        if(livestockRecord.getCondition() != null) {
+            newLivestockRecord.setCondition(livestockRecord.getCondition());
+        }
+        if(livestockRecord.getPlan() != null) {
+            newLivestockRecord.setPlan(livestockRecord.getPlan());
+        }
+        if(livestockRecord.getHealth() != null) {
+            newLivestockRecord.setHealth(livestockRecord.getHealth());
+        }
+        if(livestockRecord.getNotes() != null) {
+            newLivestockRecord.setNotes(livestockRecord.getNotes());
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(livestockRecordService.create(newLivestockRecord));
+    }
+
     @PatchMapping("/symptoms")
     public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
         // check if entry in livestock table exists via animal_id
