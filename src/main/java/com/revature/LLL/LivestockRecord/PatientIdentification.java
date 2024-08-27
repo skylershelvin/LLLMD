@@ -10,7 +10,7 @@ public class PatientIdentification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("animal_id")
-    private int animal_id;
+    private int animalId;
     @JsonProperty("breed")
     private String breed;
     @JsonProperty("age")

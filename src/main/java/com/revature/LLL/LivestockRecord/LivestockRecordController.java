@@ -26,23 +26,12 @@ public class LivestockRecordController {
     }
 
     /**
-     * Get all livestock records for user
-     * @param userId
+     * Get all livestock record by entry ID
+     * @param entryId
      * @return
      */
-    // localhost:8080/medicalRecord/user?userId=123
-    @GetMapping("/user")
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId) {
-        if (userId == 0) {
-            return ResponseEntity.badRequest().build();
-        } else {
-            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
-        }
-    }
-
-    // get livestock record by entryId
     @GetMapping("/entry")
-    public ResponseEntity<LivestockRecord> getLivestockRecord(@Valid @RequestParam int entryId) {
+    public ResponseEntity<LivestockRecord> getLivestockRecordByEntryId(@Valid @RequestParam int entryId) {
         if (entryId == 0) {
             return ResponseEntity.badRequest().build();
         } else {
@@ -50,19 +39,42 @@ public class LivestockRecordController {
         }
     }
 
+    /**
+     * Get all livestock records for user
+     * @param userId
+     * @param userType
+     * @return
+     */
+    // localhost:8080/medicalRecord/user?userId=123
+    @GetMapping("/user")
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId, @RequestHeader String userType) {
+        if (userType.equals("VET")) {
+            return ResponseEntity.ok(livestockRecordService.findAllByVetRecordVetDetailsUserId(userId));
+        } else if (userType.equals("OWNER")) {
+            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Get all livestock record by animal ID
+     * @param animalId
+     * @return
+     */
     @GetMapping("/animal")
     public ResponseEntity<LivestockRecord> getLivestockRecordByAnimalId(@Valid @RequestParam int animalId) {
         if (animalId == 0) {
             return ResponseEntity.badRequest().build();
         } else {
-            return ResponseEntity.ok(livestockRecordService.findByAnimalId(animalId));
+            return ResponseEntity.ok(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
         }
     }
 
     @PatchMapping("/symptoms")
     public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
         // check if entry in livestock table exists via animal_id
-        Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByAnimalId(animalId));
+        Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
         if(optionalLivestockRecord.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -99,7 +111,7 @@ public class LivestockRecordController {
         if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to add symptoms");
 
         // check if entry in livestock table exists
-        Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByAnimalId(animalId));
+        Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
         if(optionalLivestockRecord.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
