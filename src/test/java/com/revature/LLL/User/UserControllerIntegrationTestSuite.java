@@ -22,7 +22,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 
 @ActiveProfiles("test")
@@ -56,5 +58,24 @@ public class UserControllerIntegrationTestSuite {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(validUser))
                 .andExpect(MockMvcResultMatchers.status().is(201));
+    }
+
+    @Test
+    public void testPutUpdateUser() throws Exception{
+        String validUser =
+                "{\n" +
+                        "\"firstName\": \"John\",\n" +
+                        "\"lastName\": \"Doe\",\n" +
+                        "\"email\": \"john.doe@example.com\",\n" +
+                        "\"password\": \"password3\"\n" +
+                        "}";
+
+
+        doNothing().when(userService).update((com.revature.LLL.User.User));
+
+        mockMvc.perform(put("updatePassword"));
+
+
+
     }
 }

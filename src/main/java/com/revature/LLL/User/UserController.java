@@ -1,6 +1,7 @@
 package com.revature.LLL.User;
 
 import com.revature.LLL.User.dtos.UserResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +34,12 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable int id) {
         return ResponseEntity.ok(userService.findById(id));
     }
+
+    @PutMapping("/updatePassword")
+    private ResponseEntity<Void> putUpdateMember(@Valid @RequestBody User user){
+        userService.update(user);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

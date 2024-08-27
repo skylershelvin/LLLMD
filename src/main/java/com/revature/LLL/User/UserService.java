@@ -39,7 +39,8 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public Boolean update(User updatedObject) {
-        return null;
+        userRepository.save(updatedObject);
+        return true;
     }
 
     @Override
