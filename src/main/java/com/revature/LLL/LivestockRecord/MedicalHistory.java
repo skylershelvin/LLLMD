@@ -10,5 +10,5 @@ public class MedicalHistory {
     @JsonProperty("previous_treatments")
     private TreatmentPlan[] previous_treatments;
     @JsonProperty("vaccination_history")
-    private String[] vaccination_history; //FIXME add vaccination object?
+    private String[] vaccination_history;
 }
