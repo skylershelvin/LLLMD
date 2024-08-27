@@ -61,4 +61,10 @@ public class UserService implements Serviceable<User> {
                 .map(UserResponseDTO::new)
                 .toList();
     }
+    //todo: find by email
+
+    public User findByEmail(String email) throws AuthenticationException {
+        return (User) userRepository.findByEmail(email).orElseThrow(()-> new AuthenticationException("Incorrect email"));
+    }
+
 }

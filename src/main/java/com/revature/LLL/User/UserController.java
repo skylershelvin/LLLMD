@@ -35,10 +35,18 @@ public class UserController {
         return ResponseEntity.ok(userService.findById(id));
     }
 
-    @PutMapping("/updatePassword")
-    private ResponseEntity<Void> putUpdateMember(@Valid @RequestBody User user){
-        userService.update(user);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/forgotPassword")
+    private ResponseEntity<Void> patchForgotPassword(@Valid @RequestBody String password, String email){
+        try{
+            User user = userService.findByEmail(email);
+            user.setPassword(password);
+            userService.update(user);
+            return ResponseEntity.noContent().build();
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        }
     }
 
 
