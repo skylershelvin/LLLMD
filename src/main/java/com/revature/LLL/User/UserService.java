@@ -103,8 +103,12 @@ public class UserService implements Serviceable<User> {
      * @return the updated User object after being saved to database
      */
     @Override
-    public User update(User updatedUser) {
-        return userRepository.save(updatedUser);
+    public Boolean update(User updatedObject) {
+        userRepository.save(updatedObject);
+        return true;
+//     public User update(User updatedUser) {
+//         return userRepository.save(updatedUser);
+
     }
 
     /**
@@ -133,4 +137,10 @@ public class UserService implements Serviceable<User> {
                 .map(UserResponseDTO::new)
                 .toList();
     }
+    //todo: find by email
+
+    public User findByEmail(String email) throws AuthenticationException {
+        return (User) userRepository.findByEmail(email).orElseThrow(()-> new AuthenticationException("Incorrect email"));
+    }
+
 }

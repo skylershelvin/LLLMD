@@ -1,10 +1,14 @@
 package com.revature.LLL.User;
 
 import com.revature.LLL.User.dtos.UserResponseDTO;
+
+import jakarta.validation.Valid;
+
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.exceptions.InvalidInputException;
 import com.revature.LLL.util.exceptions.UnauthorizedException;
 import org.apache.coyote.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -119,4 +123,24 @@ public class UserController {
     public ResponseEntity<List<UserResponseDTO>> getAllFarmers(){
         return ResponseEntity.ok(userService.findAllFarmers());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @PatchMapping("/forgotPassword")
+    private ResponseEntity<Void> patchForgotPassword(@Valid @RequestBody String password, String email){
+        try{
+            User user = userService.findByEmail(email);
+            user.setPassword(password);
+            userService.update(user);
+            return ResponseEntity.noContent().build();
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        }
+    }
+
 }
