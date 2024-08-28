@@ -125,7 +125,7 @@ public class UserController {
 
     }
 
-
+    /**
      * Updates the information of an existing user.
      *
      * @param user the User object containing updated info

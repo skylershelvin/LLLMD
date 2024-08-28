@@ -62,8 +62,30 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     }
 
     @Override
-    public LivestockRecord update(LivestockRecord updatedObject) {
-        return null;
+    public LivestockRecord update(LivestockRecord updatedObject) throws JsonProcessingException {
+        // TODO: dont change owner_info
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try{
+            livestockRecordRepository.updateLivestockRecord(
+                    objectMapper.writeValueAsString(updatedObject.getPatientIdentification()),
+                    objectMapper.writeValueAsString(updatedObject.getVetRecord()),
+                    updatedObject.getMedicalHistory() != null ? objectMapper.writeValueAsString(updatedObject.getMedicalHistory()) : null,
+                    updatedObject.getCondition() != null ? objectMapper.writeValueAsString(updatedObject.getCondition()) : null,
+                    updatedObject.getPlan() != null ? objectMapper.writeValueAsString(updatedObject.getPlan()) : null,
+                    updatedObject.getHealth() != null ? objectMapper.writeValueAsString(updatedObject.getHealth()) : null,
+                    updatedObject.getNotes() != null ? objectMapper.writeValueAsString(updatedObject.getNotes()) : null,
+                    updatedObject.getPatientIdentification().getAnimalId()
+            );
+        } catch (JsonProcessingException e) {
+            throw new JsonProcessingException("Error converting LivestockRecord to JSON string") {
+            };
+        }
+
+        // Fetch the newly created record (assuming there's a way to identify it, e.g., by a unique field)
+        return livestockRecordRepository.findAllByPatientIdentificationAnimalId(
+                updatedObject.getPatientIdentification().getAnimalId()
+        ).orElseThrow(() -> new RuntimeException("Failed to fetch the newly created LivestockRecord"));
     }
 
     @Override

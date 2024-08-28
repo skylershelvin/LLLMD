@@ -159,6 +159,18 @@ public class LivestockRecordController {
         return ResponseEntity.status(HttpStatus.CREATED).body(livestockRecordService.create(livestockRecord));
     }
 
+    @PatchMapping("/animal")
+    public ResponseEntity<LivestockRecord> updateLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord, @RequestParam String userType) throws JsonProcessingException {
+        // check if userType is vet
+        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to insert a livestock entry");
+
+        // livestock record must have a vet record and patient identification and existing animal_id
+        if(livestockRecord.getVetRecord() == null || livestockRecord.getPatientIdentification() == null || livestockRecord.getPatientIdentification().getAnimalId() == 0) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(livestockRecordService.update(livestockRecord));
+    }
     @PatchMapping("/symptoms")
     public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
         // check if entry in livestock table exists via animal_id
