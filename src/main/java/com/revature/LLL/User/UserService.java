@@ -3,6 +3,7 @@ package com.revature.LLL.User;
 import com.revature.LLL.User.dtos.UserResponseDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.revature.LLL.util.interfaces.Serviceable;
 
@@ -63,8 +64,8 @@ public class UserService implements Serviceable<User> {
     }
     //todo: find by email
 
-    public User findByEmail(String email) throws AuthenticationException {
-        return (User) userRepository.findByEmail(email).orElseThrow(()-> new AuthenticationException("Incorrect email"));
+    public User findByEmail(String email) throws UsernameNotFoundException {
+        return (User) userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("Incorrect email"));
     }
 
 }
