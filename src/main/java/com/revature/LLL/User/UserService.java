@@ -99,13 +99,12 @@ public class UserService implements Serviceable<User> {
     /**
      * Updates an existing user into the database
      *
-     * @param updatedUser the User object containing updated info
+     * @param updatedObject the User object containing updated info
      * @return the updated User object after being saved to database
      */
     @Override
-    public Boolean update(User updatedObject) {
-        userRepository.save(updatedObject);
-        return true;
+    public User update(User updatedObject) {
+        return userRepository.save(updatedObject);
 //     public User update(User updatedUser) {
 //         return userRepository.save(updatedUser);
 
