@@ -1,5 +1,6 @@
 package com.revature.LLL.LivestockRecord.converters;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.revature.LLL.LivestockRecord.VetRecord;
 import jakarta.persistence.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,7 +9,12 @@ import jakarta.persistence.AttributeConverter;
 
 @Converter(autoApply = true)
 public class VetRecordConverter implements AttributeConverter<VetRecord, String> {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+
+    public VetRecordConverter() {
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+    }
 
     @Override
     // takes in CurrentCondition instance and serializes it into a json string to store in database

@@ -1,11 +1,15 @@
 package com.revature.LLL.LivestockRecord;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.interfaces.Serviceable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
 public class LivestockRecordService implements Serviceable<LivestockRecord> {
@@ -21,8 +25,28 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     }
 
     @Override
-    public LivestockRecord create(LivestockRecord newObject) {
-        return livestockRecordRepository.save(newObject);
+    public LivestockRecord create(LivestockRecord newLivestockRecord) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try{
+            livestockRecordRepository.insertLivestockRecord(
+                objectMapper.writeValueAsString(newLivestockRecord.getPatientIdentification()),
+                objectMapper.writeValueAsString(newLivestockRecord.getVetRecord()),
+                newLivestockRecord.getMedicalHistory() != null ? objectMapper.writeValueAsString(newLivestockRecord.getMedicalHistory()) : null,
+                newLivestockRecord.getCondition() != null ? objectMapper.writeValueAsString(newLivestockRecord.getCondition()) : null,
+                newLivestockRecord.getPlan() != null ? objectMapper.writeValueAsString(newLivestockRecord.getPlan()) : null,
+                newLivestockRecord.getHealth() != null ? objectMapper.writeValueAsString(newLivestockRecord.getHealth()) : null,
+                newLivestockRecord.getNotes() != null ? objectMapper.writeValueAsString(newLivestockRecord.getNotes()) : null
+            );
+        } catch (JsonProcessingException e) {
+            throw new JsonProcessingException("Error converting LivestockRecord to JSON string") {
+            };
+        }
+
+        // Fetch the newly created record (assuming there's a way to identify it, e.g., by a unique field)
+        return livestockRecordRepository.findAllByPatientIdentificationAnimalId(
+                newLivestockRecord.getPatientIdentification().getAnimalId()
+        ).orElseThrow(() -> new RuntimeException("Failed to fetch the newly created LivestockRecord"));
     }
 
     /**
