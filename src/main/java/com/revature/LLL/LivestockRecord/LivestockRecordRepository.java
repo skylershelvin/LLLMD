@@ -20,15 +20,15 @@ public interface LivestockRecordRepository extends JpaRepository<LivestockRecord
     Optional<LivestockRecord> findAllByEntryId(int entryId);
 
     // jsonb_extract_path_text is a PostgreSQL function that extracts a text value from a JSON object
-    @Query(value = "SELECT * FROM livestock WHERE jsonb_extract_path_text(patient_identification::jsonb, 'owner_info', 'userId')::INTEGER = :userId;",
+    @Query(value = "SELECT * FROM livestock WHERE json_extract_path_text(patient_identification::json, 'owner_info', 'userId')::INTEGER = :userId;",
             nativeQuery = true)
     List<LivestockRecord> findAllByPatientIdentificationOwnerInfoUserId(@Param("userId") int userId);
 
-    @Query(value = "SELECT * FROM livestock WHERE jsonb_extract_path_text(patient_identification::jsonb, 'animal_id')::INTEGER = :animalId;",
+    @Query(value = "SELECT * FROM livestock WHERE json_extract_path_text(patient_identification::json, 'animal_id')::INTEGER = :animalId;",
             nativeQuery = true)
     Optional<LivestockRecord> findAllByPatientIdentificationAnimalId(@Param("animalId") int animalId);
 
-    @Query(value = "SELECT * FROM livestock WHERE jsonb_extract_path_text(record_keeping::jsonb, 'vet_details', 'userId')::INTEGER = :userId;",
+    @Query(value = "SELECT * FROM livestock WHERE json_extract_path_text(record_keeping::json, 'vet_details', 'userId')::INTEGER = :userId;",
             nativeQuery = true)
     List<LivestockRecord> findAllByVetRecordVetDetailsUserId(@Param("userId") int userId);
 

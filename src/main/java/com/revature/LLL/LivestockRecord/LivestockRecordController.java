@@ -11,6 +11,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,9 @@ import java.util.Optional;
 @RequestMapping("medicalRecord")
 public class LivestockRecordController {
     private final LivestockRecordService livestockRecordService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     public LivestockRecordController(LivestockRecordService livestockRecordService) {
@@ -145,6 +149,12 @@ public class LivestockRecordController {
         if(livestockRecord.getVetRecord() == null || livestockRecord.getPatientIdentification() == null) {
             return ResponseEntity.badRequest().build();
         }
+
+        // fetch the next animal_id from the sequence created in the database on dbeaver
+        int nextAnimalId = jdbcTemplate.queryForObject("SELECT nextval('animal_id_seq')", Integer.class);
+
+        // set the animal_id in the PatientIdentification JSON object
+        livestockRecord.getPatientIdentification().setAnimalId(nextAnimalId);
 
         // fill out new livestock record with values present in the request body
         LivestockRecord newLivestockRecord = new LivestockRecord();

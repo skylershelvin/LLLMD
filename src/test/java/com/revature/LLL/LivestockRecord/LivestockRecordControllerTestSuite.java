@@ -157,10 +157,6 @@ public class LivestockRecordControllerTestSuite {
                 .andExpect(content().json(objectMapper.writeValueAsString(record)));
     }
 
-
-
-
-
     @Test
     public void testFindByAnimalId() throws Exception{
         int animalId = 1;
