@@ -228,7 +228,7 @@ public class UserControllerIntegrationTestSuite {
                         "}";
 
 
-        doNothing().when(userService).update((com.revature.LLL.User.User));
+        doNothing().when(userService).update((any(User.class)));
 
         mockMvc.perform(put("updatePassword"));
 

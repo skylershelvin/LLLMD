@@ -15,7 +15,7 @@ import java.util.Date;
 public class JwtGenerator {
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(Authentication authentication, int userId) {
+    public String generateToken(Authentication authentication) {
         String email = authentication.getName();
 
         Date currentDate = new Date();
@@ -23,7 +23,7 @@ public class JwtGenerator {
 
         String token = Jwts.builder()
                 .setSubject(email)
-                .claim("userId", userId)
+//                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(key)
