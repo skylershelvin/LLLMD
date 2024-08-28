@@ -46,7 +46,8 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userService.findByEmail(email);
             int id = user.getUserId();
-            String token = jwtGenerator.generateToken(authentication, id);
+            User.userType type = user.getUserType();
+            String token = jwtGenerator.generateToken(authentication, id, type);
             return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
