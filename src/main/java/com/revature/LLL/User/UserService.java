@@ -1,9 +1,9 @@
 package com.revature.LLL.User;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import javax.naming.AuthenticationException;
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
+import com.revature.LLL.User.dtos.UserResponseDTO;
+import com.revature.LLL.util.exceptions.DataNotFoundException;
+import com.revature.LLL.util.exceptions.InvalidInputException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,7 +63,7 @@ public class UserService implements Serviceable<User> {
      */
     @Override
     public List<User> findAll() {
-        return List.of();
+        return userRepository.findAll();
     }
 
     /**
@@ -138,9 +138,7 @@ public class UserService implements Serviceable<User> {
      * found.
      */
     public List<UserResponseDTO> findAllFarmers() {
-        List<User> owners = userRepository.findByUserType(User.userType.OWNER)
-                .orElseThrow(() -> new DataNotFoundException("No farmers found."));
-
+        List<User> owners = userRepository.findAll();
         if (owners.isEmpty()) {
             throw new DataNotFoundException("No farmers found.");
         }
