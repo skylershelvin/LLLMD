@@ -63,7 +63,7 @@ public class LivestockRecordController {
     @GetMapping("/user")
     public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId, @RequestHeader String userType) {
         if (userType.equals("VET")) {
-            return ResponseEntity.ok(livestockRecordService.findAllByVetRecordVetDetailsUserId(userId));
+            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
         } else if (userType.equals("OWNER")) {
             return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
         } else {
