@@ -17,6 +17,7 @@ import javax.security.sasl.AuthenticationException;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     //Imported two spring security beans

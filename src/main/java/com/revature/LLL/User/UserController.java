@@ -126,7 +126,7 @@ public class UserController {
     }
 
 
-     * Updates the information of an existing user.
+     /* Updates the information of an existing user.
      *
      * @param user the User object containing updated info
      * @return ResponseEntity containing the updated User object, or an error status otherwise
