@@ -1,5 +1,6 @@
 package com.revature.LLL.User;
 
+import com.revature.LLL.User.dtos.PasswordRequestDTO;
 import com.revature.LLL.User.dtos.UserResponseDTO;
 
 import jakarta.validation.Valid;
@@ -130,10 +131,10 @@ public class UserController {
     }
 
     @PatchMapping("/forgotPassword")
-    private ResponseEntity<Void> patchForgotPassword(@Valid @RequestBody String password, String email){
+    private ResponseEntity<Void> patchForgotPassword(@Valid @RequestBody PasswordRequestDTO request){
         try{
-            User user = userService.findByEmail(email);
-            user.setPassword(password);
+            User user = userService.findByEmail(request.getEmail());
+            user.setPassword(request.getPassword());
             userService.update(user);
             return ResponseEntity.noContent().build();
         }catch(Exception e){
