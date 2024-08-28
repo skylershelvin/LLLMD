@@ -1,26 +1,32 @@
 package com.revature.LLL.LivestockRecord;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.revature.LLL.util.exceptions.UnauthorizedException;
-import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.coyote.Response;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.revature.LLL.util.exceptions.UnauthorizedException;
+
+import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/medicalRecord")
 public class LivestockRecordController {
+
     private final LivestockRecordService livestockRecordService;
 
     @Autowired
@@ -33,6 +39,7 @@ public class LivestockRecordController {
 
     /**
      * Get all livestock record by entry ID
+     *
      * @param entryId
      * @return
      */
@@ -47,6 +54,7 @@ public class LivestockRecordController {
 
     /**
      * Get all livestock records for user
+     *
      * @param userId
      * @return
      */
@@ -62,6 +70,7 @@ public class LivestockRecordController {
 
     /**
      * Get all livestock record by animal ID
+     *
      * @param animalId
      * @return
      */
@@ -120,6 +129,7 @@ public class LivestockRecordController {
      *         "behavioral_observations": "reserved, easygoing"
      *     }
      * }
+
      * @param livestockRecord
      * @return
      * @throws JsonProcessingException
@@ -128,6 +138,7 @@ public class LivestockRecordController {
     public ResponseEntity<LivestockRecord> createLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord) throws JsonProcessingException {
         // livestock record must have a patient identification
         if(livestockRecord.getPatientIdentification() == null) {
+
             return ResponseEntity.badRequest().build();
         }
 
@@ -137,7 +148,6 @@ public class LivestockRecordController {
         // set the animal_id in the PatientIdentification JSON object
         livestockRecord.getPatientIdentification().setAnimalId(nextAnimalId);
 
-
         return ResponseEntity.status(HttpStatus.CREATED).body(livestockRecordService.create(livestockRecord));
     }
 
@@ -145,7 +155,7 @@ public class LivestockRecordController {
     public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
         // check if entry in livestock table exists via animal_id
         Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
-        if(optionalLivestockRecord.isEmpty()) {
+        if (optionalLivestockRecord.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
@@ -154,7 +164,7 @@ public class LivestockRecordController {
         CurrentCondition condition = livestockRecord.getCondition();
 
         // make new condition if none exists for the livestock record
-        if(condition == null) {
+        if (condition == null) {
             condition = new CurrentCondition();
         }
 
@@ -179,9 +189,10 @@ public class LivestockRecordController {
     @PatchMapping("/medicalHistory")
     public ResponseEntity<LivestockRecord> updateMedicalHistory(@Valid @RequestBody MedicalHistory medicalHistory, @RequestParam int animalId){
 
+
         // check if entry in livestock table exists
         Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
-        if(optionalLivestockRecord.isEmpty()) {
+        if (optionalLivestockRecord.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         LivestockRecord livestockRecord = optionalLivestockRecord.get();
