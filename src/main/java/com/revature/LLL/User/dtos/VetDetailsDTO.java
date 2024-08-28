@@ -1,20 +1,20 @@
 package com.revature.LLL.User.dtos;
 
-import com.revature.LLL.User.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * class for the owner_info json property in the PatientIdentification class
+ * class for the vet_details json property in the VetRecord class
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OwnerInfoDTO {
+public class VetDetailsDTO {
     private int userId;
     private String firstName;
     private String lastName;
     private String email;
 }
+
 

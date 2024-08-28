@@ -1,6 +1,7 @@
 package com.revature.LLL.LivestockRecord;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
 import com.revature.LLL.util.exceptions.UnauthorizedException;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -159,6 +160,63 @@ public class LivestockRecordController {
         return ResponseEntity.status(HttpStatus.CREATED).body(livestockRecordService.create(livestockRecord));
     }
 
+    /**
+     * Update a livestock record. Does not update the owner_info field of the PatientIdentification JSON object, instead
+     * it uses the existing owner_info of the given animal_id when updating the record.
+     * example request body:
+     * {
+     *     "patientIdentification": {
+     *         "animal_id": 20,
+     *         "breed": "labrador",
+     *         "age": 12,
+     *         "sex": "MALE"
+     *     },
+     *     "medicalHistory": {
+     *         "previous_illnesses": [],
+     *         "previous_treatments": [{
+     *             "medications_prescribed": [],
+     *             "antibiotics": [],
+     *             "treatment_procedures": "Rest, Ice, Compression, Elevation",
+     *             "followup_instructions": "Come back in 6 weeks"
+     *         }],
+     *         "vaccination_history": ["moderna", "pfizer"]
+     *     },
+     *     "condition": {
+     *         "examination_date": "2024-08-24",
+     *         "diagnosis": "ACL tear",
+     *         "diagnosis_tests": ["Lachman Test", "Anterior Drawer Test"],
+     *         "symptoms": ["headache", "fever", "depression"]
+     *     },
+     *     "plan": {
+     *         "medications_prescribed": ["ibuprofen"],
+     *         "antibiotics": ["penecillin", "levofloxacin"],
+     *         "treatment_procedures": "Rest, Ice, Compression, Elevation",
+     *         "followup_instructions": "Come back in 6 weeks"
+     *     },
+     *     "health": {
+     *         "monitoring_schedule": "weekly blood pressure and weight monitoring",
+     *         "progress_notes": "patient seems to be in a better mood"
+     *     },
+     *     "vetRecord": {
+     *         "vet_details": {
+     *             "userId": 3,
+     *             "firstName": "Moe",
+     *             "lastName": "Jama",
+     *             "email": "joe@mail.com"
+     *         },
+     *         "record_date": "2024-08-28",
+     *         "signature": "JMamas"
+     *     },
+     *     "notes": {
+     *         "environmental_factors": "not much personal space due to crowded barn",
+     *         "behavioral_observations": "reserved, easygoing"
+     *     }
+     * }
+     * @param livestockRecord
+     * @param userType
+     * @return
+     * @throws JsonProcessingException
+     */
     @PatchMapping("/animal")
     public ResponseEntity<LivestockRecord> updateLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord, @RequestParam String userType) throws JsonProcessingException {
         // check if userType is vet
@@ -171,6 +229,7 @@ public class LivestockRecordController {
 
         return ResponseEntity.status(HttpStatus.OK).body(livestockRecordService.update(livestockRecord));
     }
+
     @PatchMapping("/symptoms")
     public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
         // check if entry in livestock table exists via animal_id

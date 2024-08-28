@@ -2,6 +2,7 @@ package com.revature.LLL.LivestockRecord;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.interfaces.Serviceable;
 import org.springframework.stereotype.Service;
@@ -63,9 +64,13 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
 
     @Override
     public LivestockRecord update(LivestockRecord updatedObject) throws JsonProcessingException {
-        // TODO: dont change owner_info
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+
+        // set updatedObject's owner_info to the existing owner_info of the given animal_id
+        OwnerInfoDTO ownerInfo = livestockRecordRepository.findAllByPatientIdentificationAnimalId(updatedObject.getPatientIdentification().getAnimalId()).orElseThrow(() -> new DataNotFoundException("No livestock found with that animalId")).getPatientIdentification().getOwnerInfo();
+        updatedObject.getPatientIdentification().setOwnerInfo(ownerInfo);
+
         try{
             livestockRecordRepository.updateLivestockRecord(
                     objectMapper.writeValueAsString(updatedObject.getPatientIdentification()),
