@@ -22,7 +22,7 @@ public interface LivestockRecordRepository extends JpaRepository<LivestockRecord
     @Query(value = "SELECT * FROM livestock WHERE jsonb_extract_path_text(patient_identification::jsonb, 'animal_id')::INTEGER = :animalId", nativeQuery = true)
     Optional<LivestockRecord> findAllByPatientIdentificationAnimalId(@Param("animalId") int animalId);
 
-    @Query(value = "SELECT * FROM livestock WHERE jsonb_extract_path_text(record_keeping::jsonb, 'vet_details', 'userId')::INTEGER = :userId", nativeQuery = true)
+    @Query(value = "SELECT * FROM livestock WHERE jsonb_extract_path_text(vet_record::jsonb, 'vet_details', 'userId')::INTEGER = :userId", nativeQuery = true)
     List<LivestockRecord> findAllByVetRecordVetDetailsUserId(@Param("userId") int userId);
 
     @Modifying
