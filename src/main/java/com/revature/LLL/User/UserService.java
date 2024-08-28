@@ -65,7 +65,7 @@ public class UserService implements Serviceable<User> {
      * @return a list of UserResponseDTO objects representing all users with the userType OWNER.
      * @throws DataNotFoundException if no users with the userType OWNER are found.
      */
-    public List<UserResponseDTO> findAllFarmers() {
+    public List<UserResponseDTO> findAllOwners() {
         return userRepository.findByUserType(User.userType.OWNER)
                 .orElseThrow(() -> new DataNotFoundException("No farmers found."))
                 .stream()

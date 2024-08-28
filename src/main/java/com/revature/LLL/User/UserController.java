@@ -112,21 +112,21 @@ public class UserController {
     }
 
     /**
-     * Retrieves a list of all farmers, but only if the requester is a veterinarian.
+     * Retrieves a list of all owners, but only if the requester is a veterinarian.
      *
      * @param userType the type of the user making the request, which must be "VET" to access this endpoint
-     * @return a ResponseEntity containing a list of UserResponseDTO objects representing all farmers if the requester is authorized, or an appropriate error status
-     * @throws DataNotFoundException if no farmers are found
+     * @return a ResponseEntity containing a list of UserResponseDTO objects representing all owners if the requester is authorized, or an appropriate error status
+     * @throws DataNotFoundException if no owners are found
      * @throws UnauthorizedException if the requester is not a vet
      */
     @GetMapping("/farmers")
-    public ResponseEntity<List<UserResponseDTO>> getAllFarmersForVets(@RequestHeader("userType") String userType){
+    public ResponseEntity<List<UserResponseDTO>> getAllOwnersForVets(@RequestHeader("userType") String userType){
         try{
             if(!userType.equals("VET")){
                 throw new UnauthorizedException("You are not allowed to view this profile!");
             }
 
-            return ResponseEntity.ok(userService.findAllFarmers());
+            return ResponseEntity.ok(userService.findAllOwners());
         } catch (DataNotFoundException e){
             return ResponseEntity
                     .status(404)
