@@ -1,10 +1,13 @@
 package com.revature.LLL.User;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.LLL.User.dtos.PasswordRequestDTO;
 import org.apache.catalina.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 //import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.RequestEntity.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 
@@ -41,6 +45,8 @@ public class UserControllerIntegrationTestSuite {
     @Autowired
     private UserController userController;
 
+    private ObjectMapper objectMapper;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,30 +58,11 @@ public class UserControllerIntegrationTestSuite {
                         "\"lastName\": \"Doe\",\n" +
                         "\"email\": \"test2@email.com\",\n" +
                         "\"password\": \"password\"\n" +
-                "}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(validUser))
-                .andExpect(MockMvcResultMatchers.status().is(201));
-    }
-
-    @Test
-    public void testPutUpdateUser() throws Exception{
-        String validUser =
-                "{\n" +
-                        "\"firstName\": \"John\",\n" +
-                        "\"lastName\": \"Doe\",\n" +
-                        "\"email\": \"john.doe@example.com\",\n" +
-                        "\"password\": \"password3\"\n" +
                         "}";
 
-
-        doNothing().when(userService).update((com.revature.LLL.User.User));
-
-        mockMvc.perform(put("updatePassword"));
-
-
-
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/register")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(validUser))
+                .andExpect(MockMvcResultMatchers.status().is(201));
     }
 }
