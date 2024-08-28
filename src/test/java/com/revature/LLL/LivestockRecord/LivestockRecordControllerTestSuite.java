@@ -16,10 +16,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -172,6 +170,63 @@ public class LivestockRecordControllerTestSuite {
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(record)));
         verify(livestockRecordService, times(1)).findByPatientIdentificationAnimalId(animalId);
+    }
+
+    @Test
+    public void testCreateLivestockRecord() throws Exception {
+        // Arrange
+        String userType = "VET";
+
+        User owner = new User(1, "Charles", "Tester", "charles@mail.com", "password", User.userType.OWNER);
+        PatientIdentification patientIdentification = new PatientIdentification();
+        patientIdentification.setBreed("pitbull");
+        patientIdentification.setAge(12);
+        patientIdentification.setSex(PatientIdentification.Sex.FEMALE);
+        patientIdentification.setOwnerInfo(owner);
+
+        // Mock the sequence value
+        int nextAnimalId = 100;
+        patientIdentification.setAnimalId(nextAnimalId);
+
+        MedicalHistory medicalHistory = new MedicalHistory();
+        medicalHistory.setVaccination_history(new String[]{"moderna", "pfizer"});
+
+        CurrentCondition condition = new CurrentCondition();
+        condition.setDiagnosis("ACL tear");
+
+        TreatmentPlan plan = new TreatmentPlan();
+        plan.setMedications_prescribed(new String[]{"tylenol", "ibuprofen"});
+
+        LivestockHealth health = new LivestockHealth();
+        health.setMonitoring_schedule("weekly blood pressure and weight monitoring");
+
+        VetRecord vetRecord = new VetRecord();
+        vetRecord.setVetDetails(new User(3, "Joe", "Mama", "joe@mail.com", "password", User.userType.VET));
+
+        AdditionalNotes notes = new AdditionalNotes();
+        notes.setEnvironmental_factors("not much personal space due to crowded barn");
+
+        LivestockRecord livestockRecord = new LivestockRecord();
+        livestockRecord.setPatientIdentification(patientIdentification);
+        livestockRecord.setMedicalHistory(medicalHistory);
+        livestockRecord.setCondition(condition);
+        livestockRecord.setPlan(plan);
+        livestockRecord.setHealth(health);
+        livestockRecord.setVetRecord(vetRecord);
+        livestockRecord.setNotes(notes);
+
+
+
+        when(livestockRecordService.create(any(LivestockRecord.class))).thenReturn(livestockRecord);
+
+        // Act & Assert
+        mockMvc.perform(post("/medicalRecord/animal")
+                        .param("userType", userType)
+                        .content(objectMapper.writeValueAsString(livestockRecord))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().json(objectMapper.writeValueAsString(livestockRecord)));
+        verify(livestockRecordService, times(1)).create(any(LivestockRecord.class));
     }
 
     @Test
