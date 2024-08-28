@@ -115,17 +115,6 @@ public class LivestockRecordController {
      *         "monitoring_schedule": "weekly blood pressure and weight monitoring",
      *         "progress_notes": "patient seems to be in a better mood"
      *     },
-     *     "vetRecord": {
-     *         "vet_details": {
-     *             "userId": 3,
-     *             "firstName": "Joe",
-     *             "lastName": "Mama",
-     *             "email": "joe@mail.com",
-     *             "userType": "VET"
-     *         },
-     *         "record_date": "2024-08-26",
-     *         "signature": "JMamas"
-     *     },
      *     "notes": {
      *         "environmental_factors": "not much personal space due to crowded barn",
      *         "behavioral_observations": "reserved, easygoing"
