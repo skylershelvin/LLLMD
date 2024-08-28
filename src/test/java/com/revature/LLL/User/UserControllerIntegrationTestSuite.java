@@ -60,7 +60,6 @@ public class UserControllerIntegrationTestSuite {
     public void setup(){
         headers = new HttpHeaders();
         headers.add("userId", "");
-        headers.add("userType", "");
 
         mockUser = new User();
         mockUser.setUserId(1);

@@ -56,18 +56,15 @@ public class LivestockRecordController {
      * Get all livestock records for user
      *
      * @param userId
-     * @param userType
      * @return
      */
-    // localhost:8080/medicalRecord/user?userId=123
+    // localhost:8080/medicalRecord/user?userId=3
     @GetMapping("/user")
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId, @RequestHeader String userType) {
-        if (userType.equals("VET")) {
-            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
-        } else if (userType.equals("OWNER")) {
-            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
-        } else {
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId) {
+        if (userId == 0) {
             return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
         }
     }
 
@@ -87,42 +84,61 @@ public class LivestockRecordController {
     }
 
     /**
-     * Insert a new livestock record example request body: {
-     * "patientIdentification": { "breed": "labrador", "age": 12, "sex":
-     * "FEMALE", "owner_info": { "userId": 3, "firstName": "Charles",
-     * "lastName": "Tester", "email": "charles@mail.com" } }, "medicalHistory":
-     * { "previous_illnesses": [], "previous_treatments": [{
-     * "medications_prescribed": [], "antibiotics": [], "treatment_procedures":
-     * "Rest, Ice, Compression, Elevation", "followup_instructions": "Come back
-     * in 6 weeks" }], "vaccination_history": ["moderna", "pfizer"] },
-     * "condition": { "examination_date": "2024-08-24", "diagnosis": "ACL tear",
-     * "diagnosis_tests": ["Lachman Test", "Anterior Drawer Test"], "symptoms":
-     * ["headache", "fever", "depression"] }, "plan": {
-     * "medications_prescribed": ["tylenol", "ibuprofen"], "antibiotics":
-     * ["penecillin", "levofloxacin"], "treatment_procedures": "Rest, Ice,
-     * Compression, Elevation", "followup_instructions": "Come back in 6 weeks"
-     * }, "health": { "monitoring_schedule": "weekly blood pressure and weight
-     * monitoring", "progress_notes": "patient seems to be in a better mood" },
-     * "vetRecord": { "vet_details": { "userId": 3, "firstName": "Joe",
-     * "lastName": "Mama", "email": "joe@mail.com", "userType": "VET" },
-     * "record_date": "2024-08-26", "signature": "JMamas" }, "notes": {
-     * "environmental_factors": "not much personal space due to crowded barn",
-     * "behavioral_observations": "reserved, easygoing" } }
-     *
+     * Insert a new livestock record
+     * example request body:
+     * {
+     *     "patientIdentification": {
+     *         "breed": "labrador",
+     *         "age": 12,
+     *         "sex": "FEMALE",
+     *         "owner_info": {
+     *             "userId": 3,
+     *             "firstName": "Charles",
+     *             "lastName": "Tester",
+     *             "email": "charles@mail.com"
+     *         }
+     *     },
+     *     "medicalHistory": {
+     *         "previous_illnesses": [],
+     *         "previous_treatments": [{
+     *             "medications_prescribed": [],
+     *             "antibiotics": [],
+     *             "treatment_procedures": "Rest, Ice, Compression, Elevation",
+     *             "followup_instructions": "Come back in 6 weeks"
+     *         }],
+     *         "vaccination_history": ["moderna", "pfizer"]
+     *     },
+     *     "condition": {
+     *         "examination_date": "2024-08-24",
+     *         "diagnosis": "ACL tear",
+     *         "diagnosis_tests": ["Lachman Test", "Anterior Drawer Test"],
+     *         "symptoms": ["headache", "fever", "depression"]
+     *     },
+     *     "plan": {
+     *         "medications_prescribed": ["tylenol", "ibuprofen"],
+     *         "antibiotics": ["penecillin", "levofloxacin"],
+     *         "treatment_procedures": "Rest, Ice, Compression, Elevation",
+     *         "followup_instructions": "Come back in 6 weeks"
+     *     },
+     *     "health": {
+     *         "monitoring_schedule": "weekly blood pressure and weight monitoring",
+     *         "progress_notes": "patient seems to be in a better mood"
+     *     },
+     *     "notes": {
+     *         "environmental_factors": "not much personal space due to crowded barn",
+     *         "behavioral_observations": "reserved, easygoing"
+     *     }
+     * }
+
      * @param livestockRecord
-     * @param userType
      * @return
      * @throws JsonProcessingException
      */
     @PostMapping("/animal")
-    public ResponseEntity<LivestockRecord> createLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord, @RequestParam String userType) throws JsonProcessingException {
-        // check if userType is vet
-        if (!userType.equals("VET")) {
-            throw new UnauthorizedException("You must be a vet to insert a livestock entry");
-        }
+    public ResponseEntity<LivestockRecord> createLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord) throws JsonProcessingException {
+        // livestock record must have a patient identification
+        if(livestockRecord.getPatientIdentification() == null) {
 
-        // livestock record must have a vet record and patient identification
-        if (livestockRecord.getVetRecord() == null || livestockRecord.getPatientIdentification() == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -171,10 +187,8 @@ public class LivestockRecordController {
     }
      */
     @PatchMapping("/medicalHistory")
-    public ResponseEntity<LivestockRecord> updateMedicalHistory(@Valid @RequestBody MedicalHistory medicalHistory, @RequestParam int animalId, @RequestHeader String userType) {
-        if (!userType.equals("VET")) {
-            throw new UnauthorizedException("You must be a vet to add symptoms");
-        }
+    public ResponseEntity<LivestockRecord> updateMedicalHistory(@Valid @RequestBody MedicalHistory medicalHistory, @RequestParam int animalId){
+
 
         // check if entry in livestock table exists
         Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
