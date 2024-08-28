@@ -18,7 +18,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping
+    @PostMapping("/users/login")
     private ResponseEntity<Void> postLogin(@RequestParam String email, @RequestParam String password) throws javax.naming.AuthenticationException {
 
         User user = authService.login(email, password);
