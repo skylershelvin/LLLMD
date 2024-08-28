@@ -3,6 +3,7 @@ package com.revature.LLL.LivestockRecord;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.LLL.User.User;
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -105,7 +106,7 @@ public class LivestockRecordControllerTestSuite {
         int userId = 1;
         String userType = "OWNER";
 
-        User owner = new User();
+        OwnerInfoDTO owner = new OwnerInfoDTO();
         owner.setUserId(userId);
 
         PatientIdentification patientIdentity = new PatientIdentification();
@@ -177,7 +178,7 @@ public class LivestockRecordControllerTestSuite {
         // Arrange
         String userType = "VET";
 
-        User owner = new User(1, "Charles", "Tester", "charles@mail.com", "password", User.userType.OWNER);
+        OwnerInfoDTO owner = new OwnerInfoDTO(1, "Charles", "Tester", "charles@mail.com");
         PatientIdentification patientIdentification = new PatientIdentification();
         patientIdentification.setBreed("pitbull");
         patientIdentification.setAge(12);
@@ -275,7 +276,7 @@ public class LivestockRecordControllerTestSuite {
         mockPatientIdentification.setBreed("dog");
         mockPatientIdentification.setAge(5);
         mockPatientIdentification.setSex(PatientIdentification.Sex.MALE);
-        mockPatientIdentification.setOwnerInfo(new User(1, "John", "Doe", "john@mail.com", "johnpw", User.userType.VET));
+        mockPatientIdentification.setOwnerInfo(new OwnerInfoDTO(1, "John", "Doe", "john@mail.com"));
 
 
 

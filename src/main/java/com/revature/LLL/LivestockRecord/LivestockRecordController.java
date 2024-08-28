@@ -81,15 +81,14 @@ public class LivestockRecordController {
      * example request body:
      * {
      *     "patientIdentification": {
-     *         "breed": "pitbull",
+     *         "breed": "labrador",
      *         "age": 12,
      *         "sex": "FEMALE",
      *         "owner_info": {
      *             "userId": 3,
      *             "firstName": "Charles",
      *             "lastName": "Tester",
-     *             "email": "charles@mail.com",
-     *             "userType": "OWNER"
+     *             "email": "charles@mail.com"
      *         }
      *     },
      *     "medicalHistory": {
