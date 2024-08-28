@@ -124,7 +124,7 @@ public class UserController {
         }
 
     }
-
+  
     /**
      * Updates the information of an existing user.
      *

@@ -17,6 +17,7 @@ import javax.security.sasl.AuthenticationException;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     //Imported two spring security beans
@@ -35,7 +36,8 @@ public class AuthController {
     }
 
 
-    @PostMapping
+
+    @PostMapping("/users/login")
     public ResponseEntity<?> postLogin(@RequestParam String email, @RequestParam String password) {
         try {
             Authentication authentication = authenticationManager.authenticate(
