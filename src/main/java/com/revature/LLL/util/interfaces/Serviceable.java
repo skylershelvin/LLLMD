@@ -1,10 +1,12 @@
 package com.revature.LLL.util.interfaces;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.List;
 
 public interface Serviceable<O> {
     List<O> findAll();
-    O create(O newObject);
+    O create(O newObject) throws JsonProcessingException;
     O findById(int id);
     O update(O updatedObject);
     Boolean delete(O deletedObject);

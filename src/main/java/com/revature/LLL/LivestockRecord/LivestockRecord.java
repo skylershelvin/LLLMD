@@ -16,24 +16,31 @@ public class LivestockRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int entryId;
 
+    @Column(columnDefinition = "json")
     @Convert(converter = PatientIdentificationConverter.class)
     private PatientIdentification patientIdentification;
 
+    @Column(columnDefinition = "json")
     @Convert(converter= MedicalHistoryConverter.class)
     private MedicalHistory medicalHistory;
 
+    @Column(columnDefinition = "json")
     @Convert(converter= CurrentConditionConverter.class)
     private CurrentCondition condition;
 
+    @Column(columnDefinition = "json")
     @Convert(converter= TreatmentPlanConverter.class)
     private TreatmentPlan plan;
 
+    @Column(columnDefinition = "json")
     @Convert(converter = LivestockHealthConverter.class)
     private LivestockHealth health;
 
+    @Column(columnDefinition = "json")
     @Convert(converter = VetRecordConverter.class)
     private VetRecord vetRecord;
 
+    @Column(columnDefinition = "json")
     @Convert(converter = AdditionalNotesConverter.class)
     private AdditionalNotes notes;
 }
