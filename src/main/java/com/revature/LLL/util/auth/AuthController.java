@@ -35,7 +35,8 @@ public class AuthController {
     }
 
 
-    @PostMapping
+
+    @PostMapping("/users/login")
     public ResponseEntity<?> postLogin(@RequestParam String email, @RequestParam String password) {
         try {
             Authentication authentication = authenticationManager.authenticate(
