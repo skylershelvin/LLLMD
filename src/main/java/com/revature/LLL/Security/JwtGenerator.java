@@ -17,7 +17,7 @@ public class JwtGenerator {
 
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(Authentication authentication, int userId) {
+    public String generateToken(Authentication authentication, int userId, User.userType userType) {
         String email = authentication.getName();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
@@ -25,6 +25,7 @@ public class JwtGenerator {
         String token = Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId)
+                .claim("userType", userType)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(key)
