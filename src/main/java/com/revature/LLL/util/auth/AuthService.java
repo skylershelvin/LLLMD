@@ -21,4 +21,5 @@ public class AuthService {
     public User login(String email, String password) throws AuthenticationException {
         return userService.findByEmailAndPassword(email, password);
     }
+
 }

@@ -3,6 +3,7 @@ package com.revature.LLL.LivestockRecord;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.LLL.User.User;
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,10 +17,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,11 +33,81 @@ public class LivestockRecordControllerTestSuite {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Test the getLivestockRecordByEntryId method in LivestockRecordController
+     * @throws Exception
+     */
     @Test
-    public void testFindAllByPatientIdentificationOwnerInfoUserId() throws Exception {
+    public void testGetLivestockRecordByEntryId() throws Exception {
         // Arrange
-        User owner = new User();
-        owner.setUserId(1);
+        int entryId1 = 1;
+        int entryId2 = 2;
+
+        LivestockRecord record1 = new LivestockRecord();
+        record1.setEntryId(entryId1);
+
+        LivestockRecord record2 = new LivestockRecord();
+        record2.setEntryId(entryId2);
+
+        when(livestockRecordService.findById(entryId1)).thenReturn(record1);
+
+        // Act & Assert
+        mockMvc.perform(get("/medicalRecord/entry")
+                        .param("entryId", String.valueOf(entryId1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(record1)));
+    }
+
+    /**
+     * Test the getLivestockRecordsByUserId method in LivestockRecordController
+     * User type is VET
+     * @throws Exception
+     */
+    @Test
+    public void testGetLivestockRecordsByUserIdAsVet() throws Exception {
+        // Arrange
+        int userId = 1;
+        String userType = "VET";
+
+        User vet = new User();
+        vet.setUserId(userId);
+
+        VetRecord vetRecord = new VetRecord();
+        vetRecord.setVetDetails(vet);
+
+        LivestockRecord record1 = new LivestockRecord();
+        record1.setVetRecord(vetRecord);
+
+        LivestockRecord record2 = new LivestockRecord();
+        record2.setVetRecord(vetRecord);
+
+        List<LivestockRecord> records = Arrays.asList(record1, record2);
+
+        when(livestockRecordService.findAllByVetRecordVetDetailsUserId(userId)).thenReturn(records);
+
+        // Act & Assert
+        mockMvc.perform(get("/medicalRecord/user")
+                        .param("userId", String.valueOf(userId))
+                        .header("userType", userType)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(records)));
+    }
+
+    /**
+     * Test the getLivestockRecordsByUserId method in LivestockRecordController
+     * User type is OWNER
+     * @throws Exception
+     */
+    @Test
+    public void testGetLivestockRecordsByUserIdAsOwner() throws Exception {
+        // Arrange
+        int userId = 1;
+        String userType = "OWNER";
+
+        OwnerInfoDTO owner = new OwnerInfoDTO();
+        owner.setUserId(userId);
 
         PatientIdentification patientIdentity = new PatientIdentification();
         patientIdentity.setOwnerInfo(owner);
@@ -51,31 +120,114 @@ public class LivestockRecordControllerTestSuite {
 
         List<LivestockRecord> records = Arrays.asList(record1, record2);
 
-        when(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(1)).thenReturn(records);
+        when(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId)).thenReturn(records);
 
         // Act & Assert
         mockMvc.perform(get("/medicalRecord/user")
-                        .param("userId", String.valueOf(1))
+                        .param("userId", String.valueOf(userId))
+                        .header("userType", userType)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(records)));
+    }
+
+    /**
+     * Test the getLivestockRecordByAnimalId method in LivestockRecordController
+     * @throws Exception
+     */
+    @Test
+    public void testGetLivestockRecordByAnimalId() throws Exception {
+        // Arrange
+        int animalId = 1;
+
+        PatientIdentification patientIdentity = new PatientIdentification();
+        patientIdentity.setAnimalId(animalId);
+
+        LivestockRecord record = new LivestockRecord();
+        record.setPatientIdentification(patientIdentity);
+
+        when(livestockRecordService.findByPatientIdentificationAnimalId(animalId)).thenReturn(record);
+
+        // Act & Assert
+        mockMvc.perform(get("/medicalRecord/animal")
+                        .param("animalId", String.valueOf(animalId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(record)));
     }
 
     @Test
     public void testFindByAnimalId() throws Exception{
         int animalId = 1;
         PatientIdentification patientIdentification = new PatientIdentification();
-        patientIdentification.setAnimal_id(animalId);
+        patientIdentification.setAnimalId(animalId);
         LivestockRecord record = new LivestockRecord();
         record.setPatientIdentification(patientIdentification);
 
-        when(livestockRecordService.findByAnimalId(animalId)).thenReturn(record);
+        when(livestockRecordService.findByPatientIdentificationAnimalId(animalId)).thenReturn(record);
         mockMvc.perform(get("/medicalRecord/animal")
                         .param("animalId", String.valueOf(animalId))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(record)));
-        verify(livestockRecordService, times(1)).findByAnimalId(animalId);
+        verify(livestockRecordService, times(1)).findByPatientIdentificationAnimalId(animalId);
+    }
+
+    @Test
+    public void testCreateLivestockRecord() throws Exception {
+        // Arrange
+        String userType = "VET";
+
+        OwnerInfoDTO owner = new OwnerInfoDTO(1, "Charles", "Tester", "charles@mail.com");
+        PatientIdentification patientIdentification = new PatientIdentification();
+        patientIdentification.setBreed("pitbull");
+        patientIdentification.setAge(12);
+        patientIdentification.setSex(PatientIdentification.Sex.FEMALE);
+        patientIdentification.setOwnerInfo(owner);
+
+        // Mock the sequence value
+        int nextAnimalId = 100;
+        patientIdentification.setAnimalId(nextAnimalId);
+
+        MedicalHistory medicalHistory = new MedicalHistory();
+        medicalHistory.setVaccination_history(new String[]{"moderna", "pfizer"});
+
+        CurrentCondition condition = new CurrentCondition();
+        condition.setDiagnosis("ACL tear");
+
+        TreatmentPlan plan = new TreatmentPlan();
+        plan.setMedications_prescribed(new String[]{"tylenol", "ibuprofen"});
+
+        LivestockHealth health = new LivestockHealth();
+        health.setMonitoring_schedule("weekly blood pressure and weight monitoring");
+
+        VetRecord vetRecord = new VetRecord();
+        vetRecord.setVetDetails(new User(3, "Joe", "Mama", "joe@mail.com", "password", User.userType.VET));
+
+        AdditionalNotes notes = new AdditionalNotes();
+        notes.setEnvironmental_factors("not much personal space due to crowded barn");
+
+        LivestockRecord livestockRecord = new LivestockRecord();
+        livestockRecord.setPatientIdentification(patientIdentification);
+        livestockRecord.setMedicalHistory(medicalHistory);
+        livestockRecord.setCondition(condition);
+        livestockRecord.setPlan(plan);
+        livestockRecord.setHealth(health);
+        livestockRecord.setVetRecord(vetRecord);
+        livestockRecord.setNotes(notes);
+
+
+
+        when(livestockRecordService.create(any(LivestockRecord.class))).thenReturn(livestockRecord);
+
+        // Act & Assert
+        mockMvc.perform(post("/medicalRecord/animal")
+                        .param("userType", userType)
+                        .content(objectMapper.writeValueAsString(livestockRecord))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().json(objectMapper.writeValueAsString(livestockRecord)));
+        verify(livestockRecordService, times(1)).create(any(LivestockRecord.class));
     }
 
     @Test
@@ -89,9 +241,9 @@ public class LivestockRecordControllerTestSuite {
         LivestockRecord record1 = new LivestockRecord();
         record1.setCondition(condition);
         record1.setPatientIdentification(new PatientIdentification());
-        record1.getPatientIdentification().setAnimal_id(1);
+        record1.getPatientIdentification().setAnimalId(1);
 
-        when(livestockRecordService.findByAnimalId(1)).thenReturn(record1);
+        when(livestockRecordService.findByPatientIdentificationAnimalId(1)).thenReturn(record1);
         when(livestockRecordService.updateSymptoms(eq(record1))).thenReturn(record1);
 
         // Act & Assert
@@ -101,7 +253,7 @@ public class LivestockRecordControllerTestSuite {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(record1)));
-        verify(livestockRecordService, times(1)).findByAnimalId(1);
+        verify(livestockRecordService, times(1)).findByPatientIdentificationAnimalId(1);
         verify(livestockRecordService, times(1)).updateSymptoms(record1);
     }
     @Test
@@ -120,11 +272,11 @@ public class LivestockRecordControllerTestSuite {
 
         // set up PatientIdentification object to be used to find which record to update via animal_id
         PatientIdentification mockPatientIdentification = new PatientIdentification();
-        mockPatientIdentification.setAnimal_id(1);
+        mockPatientIdentification.setAnimalId(1);
         mockPatientIdentification.setBreed("dog");
         mockPatientIdentification.setAge(5);
         mockPatientIdentification.setSex(PatientIdentification.Sex.MALE);
-        mockPatientIdentification.setOwnerInfo(new User(1, "John", "Doe", "john@mail.com", "johnpw", User.userType.VET));
+        mockPatientIdentification.setOwnerInfo(new OwnerInfoDTO(1, "John", "Doe", "john@mail.com"));
 
 
 
@@ -133,7 +285,7 @@ public class LivestockRecordControllerTestSuite {
         record1.setPatientIdentification(mockPatientIdentification);
 
         // return the record1 which has animal_id = 1, needed because the patch request needs to find the record to update
-        when(livestockRecordService.findByAnimalId(1)).thenReturn(record1);
+        when(livestockRecordService.findByPatientIdentificationAnimalId(1)).thenReturn(record1);
 
         // return the record1 after updating the medical history
         when(livestockRecordService.updateMedicalHistory(record1)).thenReturn(record1);
