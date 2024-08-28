@@ -1,5 +1,6 @@
 package com.revature.LLL.User;
 
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
 import com.revature.LLL.User.dtos.UserResponseDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.exceptions.InvalidInputException;
@@ -57,7 +58,7 @@ public class UserService implements Serviceable<User> {
      */
     @Override
     public List<User> findAll() {
-        return List.of();
+        return userRepository.findAll();
     }
 
     /**
@@ -128,9 +129,7 @@ public class UserService implements Serviceable<User> {
      * @throws DataNotFoundException if no users with the userType OWNER are found.
      */
     public List<UserResponseDTO> findAllFarmers() {
-        List<User> owners = userRepository.findByUserType(User.userType.OWNER)
-                .orElseThrow(() -> new DataNotFoundException("No farmers found."));
-
+        List<User> owners = userRepository.findAll();
         if (owners.isEmpty()) {
             throw new DataNotFoundException("No farmers found.");
         }

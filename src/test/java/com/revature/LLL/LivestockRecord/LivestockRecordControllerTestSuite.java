@@ -68,7 +68,6 @@ public class LivestockRecordControllerTestSuite {
     public void testGetLivestockRecordsByUserIdAsVet() throws Exception {
         // Arrange
         int userId = 1;
-        String userType = "VET";
 
         User vet = new User();
         vet.setUserId(userId);
@@ -89,7 +88,6 @@ public class LivestockRecordControllerTestSuite {
         // Act & Assert
         mockMvc.perform(get("/medicalRecord/user")
                         .param("userId", String.valueOf(userId))
-                        .header("userType", userType)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(records)));
@@ -176,7 +174,6 @@ public class LivestockRecordControllerTestSuite {
     @Test
     public void testCreateLivestockRecord() throws Exception {
         // Arrange
-        String userType = "VET";
 
         OwnerInfoDTO owner = new OwnerInfoDTO(1, "Charles", "Tester", "charles@mail.com");
         PatientIdentification patientIdentification = new PatientIdentification();
@@ -202,7 +199,7 @@ public class LivestockRecordControllerTestSuite {
         health.setMonitoring_schedule("weekly blood pressure and weight monitoring");
 
         VetRecord vetRecord = new VetRecord();
-        vetRecord.setVetDetails(new User(3, "Joe", "Mama", "joe@mail.com", "password", User.userType.VET));
+        vetRecord.setVetDetails(new User(3, "Joe", "Mama", "joe@mail.com", "password"));
 
         AdditionalNotes notes = new AdditionalNotes();
         notes.setEnvironmental_factors("not much personal space due to crowded barn");
@@ -222,7 +219,6 @@ public class LivestockRecordControllerTestSuite {
 
         // Act & Assert
         mockMvc.perform(post("/medicalRecord/animal")
-                        .param("userType", userType)
                         .content(objectMapper.writeValueAsString(livestockRecord))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())

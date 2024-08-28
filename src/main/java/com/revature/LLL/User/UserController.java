@@ -68,47 +68,42 @@ public class UserController {
      * @param parseId the userId passed in the header
      * @return ResponseEntity containing the User object, or an error status otherwise
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable int userId, @RequestHeader("userId") String parseId){
-        try{
-            int headerId = Integer.parseInt(parseId);
-
-            if(userId != headerId){
-                throw new UnauthorizedException("You are not allowed to view this profile!");
-            }
-
-            return ResponseEntity
-                    .status(200)
-                    .body(userService.findById(userId));
-
-        } catch (DataNotFoundException e){
-            return ResponseEntity
-                    .status(404)
-                    .build();
-        } catch (UnauthorizedException e){
-            return ResponseEntity
-                    .status(403)
-                    .build();
-        }
-
-    }
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<User> getUserById(@PathVariable int userId, @RequestHeader("userId") String parseId){
+//        try{
+//            int headerId = Integer.parseInt(parseId);
+//
+//            if(userId != headerId){
+//                throw new UnauthorizedException("You are not allowed to view this profile!");
+//            }
+//
+//            return ResponseEntity
+//                    .status(200)
+//                    .body(userService.findById(userId));
+//
+//        } catch (DataNotFoundException e){
+//            return ResponseEntity
+//                    .status(404)
+//                    .build();
+//        } catch (UnauthorizedException e){
+//            return ResponseEntity
+//                    .status(403)
+//                    .build();
+//        }
+//
+//    }
 
     /**
      * Retrieves a user by their ID, but only if the requester is a veterinarian.
      *
      * @param userId the ID of the user to retrieve
-     * @param userType the type of the user making the request, which must be "VET" to access this endpoint
      * @return a ResponseEntity containing the user if found and the requester is authorized, or an appropriate error status
      * @throws DataNotFoundException if no user with the given ID is found
      * @throws UnauthorizedException if the requester is not a vet
      */
     @GetMapping("/farmers/{userId}")
-    public ResponseEntity<User> getUserByUserIdForVets(@PathVariable int userId, @RequestHeader("userType") String userType){
+    public ResponseEntity<User> getUserByUserId(@PathVariable int userId){
         try{
-            if(!userType.equals("VET")){
-                throw new UnauthorizedException("You are not allowed to view this profile!");
-            }
-
             return ResponseEntity
                     .status(200)
                     .body(userService.findById(userId));
@@ -151,18 +146,13 @@ public class UserController {
     /**
      * Retrieves a list of all farmers, but only if the requester is a veterinarian.
      *
-     * @param userType the type of the user making the request, which must be "VET" to access this endpoint
      * @return a ResponseEntity containing a list of UserResponseDTO objects representing all owners if the requester is authorized, or an appropriate error status
      * @throws DataNotFoundException if no farmers are found
      * @throws UnauthorizedException if the requester is not a vet
      */
-    @GetMapping("/farmers")
-    public ResponseEntity<List<UserResponseDTO>> getAllFarmersForVets(@RequestHeader("userType") String userType){
+    @GetMapping("/all")
+    public ResponseEntity<List<UserResponseDTO>> getAllFarmers(){
         try{
-            if(!userType.equals("VET")){
-                throw new UnauthorizedException("You are not allowed to view this profile!");
-            }
-
             return ResponseEntity.ok(userService.findAllFarmers());
         } catch (DataNotFoundException e){
             return ResponseEntity
