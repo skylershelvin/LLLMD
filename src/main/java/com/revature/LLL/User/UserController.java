@@ -124,9 +124,9 @@ public class UserController {
         }
 
     }
-
-
-     /* Updates the information of an existing user.
+  
+    /**
+     * Updates the information of an existing user.
      *
      * @param user the User object containing updated info
      * @return ResponseEntity containing the updated User object, or an error status otherwise
@@ -152,7 +152,7 @@ public class UserController {
      * Retrieves a list of all farmers, but only if the requester is a veterinarian.
      *
      * @param userType the type of the user making the request, which must be "VET" to access this endpoint
-     * @return a ResponseEntity containing a list of UserResponseDTO objects representing all farmers if the requester is authorized, or an appropriate error status
+     * @return a ResponseEntity containing a list of UserResponseDTO objects representing all owners if the requester is authorized, or an appropriate error status
      * @throws DataNotFoundException if no farmers are found
      * @throws UnauthorizedException if the requester is not a vet
      */

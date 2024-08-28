@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import com.revature.LLL.util.interfaces.Serviceable;
 
 import javax.naming.AuthenticationException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * UserService provides business logic for user operations such as creating a user,
@@ -130,9 +128,14 @@ public class UserService implements Serviceable<User> {
      * @throws DataNotFoundException if no users with the userType OWNER are found.
      */
     public List<UserResponseDTO> findAllFarmers() {
-        return userRepository.findByUserType(User.userType.OWNER)
-                .orElseThrow(() -> new DataNotFoundException("No farmers found."))
-                .stream()
+        List<User> owners = userRepository.findByUserType(User.userType.OWNER)
+                .orElseThrow(() -> new DataNotFoundException("No farmers found."));
+
+        if (owners.isEmpty()) {
+            throw new DataNotFoundException("No farmers found.");
+        }
+
+        return owners.stream()
                 .map(UserResponseDTO::new)
                 .toList();
     }
