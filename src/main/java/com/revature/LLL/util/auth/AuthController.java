@@ -34,29 +34,6 @@ public class AuthController {
         this.jwtGenerator = jwtGenerator;
     }
 
-//    @PostMapping
-//    private ResponseEntity<AuthResponseDto> postLogin(@RequestParam String email, @RequestParam String password) throws javax.naming.AuthenticationException {
-//
-//
-//        //Authenticates the user and compares the password against the encrypted password in the backend
-//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-//        //Stores the authentication information of the user for later user (e.g. session management, authorization)
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        User user = authService.login(email, password);
-//        //Get userId so that it can be saved to the JWT payload
-//        int id = user.getUserId();
-//        //Generate JWT and send it as part of the response
-//        String token = jwtGenerator.generateToken(authentication, id);
-//        return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
-//
-//
-//
-//
-////        return ResponseEntity.noContent()
-////                .header("userId", String.valueOf(user.getUserId()))
-////                .header("userType", user.getUserType().name())
-////                .build();
-//    }
 
     @PostMapping
     public ResponseEntity<?> postLogin(@RequestParam String email, @RequestParam String password) {
@@ -67,7 +44,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userService.findByEmail(email);
             int id = user.getUserId();
-            String token = jwtGenerator.generateToken(authentication);
+            String token = jwtGenerator.generateToken(authentication, id);
             return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);

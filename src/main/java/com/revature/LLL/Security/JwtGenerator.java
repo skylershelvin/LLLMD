@@ -1,5 +1,6 @@
 package com.revature.LLL.Security;
 
+import com.revature.LLL.User.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,15 +16,14 @@ import java.util.Date;
 public class JwtGenerator {
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, int userId) {
         String email = authentication.getName();
-
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
 
         String token = Jwts.builder()
                 .setSubject(email)
-//                .claim("userId", userId)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(key)
