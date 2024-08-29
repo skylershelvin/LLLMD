@@ -14,6 +14,10 @@ import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.exceptions.InvalidInputException;
 import com.revature.LLL.util.interfaces.Serviceable;
 
+import javax.naming.AuthenticationException;
+import javax.xml.crypto.Data;
+import java.util.List;
+
 /**
  * UserService provides business logic for user operations such as creating a
  * user, finding a user by email in password for authenthication, and conversion
@@ -95,7 +99,7 @@ public class UserService implements Serviceable<User> {
     public User findById(int id) {
         try {
             return userRepository.findById(id).get();
-        } catch (NoSuchElementException e) {
+        } catch (DataNotFoundException e) {
             throw new DataNotFoundException("No such user with that id found");
         }
 

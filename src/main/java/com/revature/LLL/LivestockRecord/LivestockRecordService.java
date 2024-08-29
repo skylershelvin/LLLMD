@@ -2,6 +2,7 @@ package com.revature.LLL.LivestockRecord;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.interfaces.Serviceable;
 import org.springframework.stereotype.Service;
@@ -62,8 +63,34 @@ public class LivestockRecordService implements Serviceable<LivestockRecord> {
     }
 
     @Override
-    public LivestockRecord update(LivestockRecord updatedObject) {
-        return null;
+    public LivestockRecord update(LivestockRecord updatedObject) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // set updatedObject's owner_info to the existing owner_info of the given animal_id
+        OwnerInfoDTO ownerInfo = livestockRecordRepository.findAllByPatientIdentificationAnimalId(updatedObject.getPatientIdentification().getAnimalId()).orElseThrow(() -> new DataNotFoundException("No livestock found with that animalId")).getPatientIdentification().getOwnerInfo();
+        updatedObject.getPatientIdentification().setOwnerInfo(ownerInfo);
+
+        try{
+            livestockRecordRepository.updateLivestockRecord(
+                    objectMapper.writeValueAsString(updatedObject.getPatientIdentification()),
+                    objectMapper.writeValueAsString(updatedObject.getVetRecord()),
+                    updatedObject.getMedicalHistory() != null ? objectMapper.writeValueAsString(updatedObject.getMedicalHistory()) : null,
+                    updatedObject.getCondition() != null ? objectMapper.writeValueAsString(updatedObject.getCondition()) : null,
+                    updatedObject.getPlan() != null ? objectMapper.writeValueAsString(updatedObject.getPlan()) : null,
+                    updatedObject.getHealth() != null ? objectMapper.writeValueAsString(updatedObject.getHealth()) : null,
+                    updatedObject.getNotes() != null ? objectMapper.writeValueAsString(updatedObject.getNotes()) : null,
+                    updatedObject.getPatientIdentification().getAnimalId()
+            );
+        } catch (JsonProcessingException e) {
+            throw new JsonProcessingException("Error converting LivestockRecord to JSON string") {
+            };
+        }
+
+        // Fetch the newly created record (assuming there's a way to identify it, e.g., by a unique field)
+        return livestockRecordRepository.findAllByPatientIdentificationAnimalId(
+                updatedObject.getPatientIdentification().getAnimalId()
+        ).orElseThrow(() -> new RuntimeException("Failed to fetch the newly created LivestockRecord"));
     }
 
     @Override

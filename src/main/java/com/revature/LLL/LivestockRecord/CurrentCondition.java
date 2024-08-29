@@ -14,7 +14,7 @@ public class CurrentCondition {
     @JsonProperty("diagnosis")
     private String diagnosis;
     @JsonProperty("diagnosis_tests")
-    private String[] diagnosis_tests;
+    private String diagnosis_tests;
     @JsonProperty("symptoms")
-    private String[] symptoms;
+    private String symptoms;
 }
