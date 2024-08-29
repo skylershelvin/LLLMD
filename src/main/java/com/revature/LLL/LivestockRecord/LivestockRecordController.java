@@ -150,9 +150,75 @@ public class LivestockRecordController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(livestockRecordService.create(livestockRecord));
     }
+    /**
+     * Update a livestock record. Does not update the owner_info field of the PatientIdentification JSON object, instead
+     * it uses the existing owner_info of the given animal_id when updating the record.
+     * example request body:
+     * {
+     *     "patientIdentification": {
+     *         "animal_id": 20,
+     *         "breed": "labrador",
+     *         "age": 12,
+     *         "sex": "MALE"
+     *     },
+     *     "medicalHistory": {
+     *         "previous_illnesses": [],
+     *         "previous_treatments": [{
+     *             "medications_prescribed": [],
+     *             "antibiotics": [],
+     *             "treatment_procedures": "Rest, Ice, Compression, Elevation",
+     *             "followup_instructions": "Come back in 6 weeks"
+     *         }],
+     *         "vaccination_history": ["moderna", "pfizer"]
+     *     },
+     *     "condition": {
+     *         "examination_date": "2024-08-24",
+     *         "diagnosis": "ACL tear",
+     *         "diagnosis_tests": ["Lachman Test", "Anterior Drawer Test"],
+     *         "symptoms": ["headache", "fever", "depression"]
+     *     },
+     *     "plan": {
+     *         "medications_prescribed": ["ibuprofen"],
+     *         "antibiotics": ["penecillin", "levofloxacin"],
+     *         "treatment_procedures": "Rest, Ice, Compression, Elevation",
+     *         "followup_instructions": "Come back in 6 weeks"
+     *     },
+     *     "health": {
+     *         "monitoring_schedule": "weekly blood pressure and weight monitoring",
+     *         "progress_notes": "patient seems to be in a better mood"
+     *     },
+     *     "vetRecord": {
+     *         "vet_details": {
+     *             "userId": 3,
+     *             "firstName": "Moe",
+     *             "lastName": "Jama",
+     *             "email": "joe@mail.com"
+     *         },
+     *         "record_date": "2024-08-28",
+     *         "signature": "JMamas"
+     *     },
+     *     "notes": {
+     *         "environmental_factors": "not much personal space due to crowded barn",
+     *         "behavioral_observations": "reserved, easygoing"
+     *     }
+     * }
+     * @param livestockRecord
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PatchMapping("/animal")
+    public ResponseEntity<LivestockRecord> updateLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord) throws JsonProcessingException {
 
+        // livestock record must have a patient identification and existing animal_id
+        if(livestockRecord.getPatientIdentification() == null || livestockRecord.getPatientIdentification().getAnimalId() == 0) {
+            System.out.println(livestockRecord);
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(livestockRecordService.update(livestockRecord));
+    }
     @PatchMapping("/symptoms")
-    public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
+    public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String symptoms, @RequestParam int animalId) {
         // check if entry in livestock table exists via animal_id
         Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
         if (optionalLivestockRecord.isEmpty()) {
@@ -201,7 +267,7 @@ public class LivestockRecordController {
         // update medical history json in livestock object and update the database record
         currentMedicalHistory.setPrevious_illnesses(medicalHistory.getPrevious_illnesses());
         currentMedicalHistory.setVaccination_history(medicalHistory.getVaccination_history());
-        currentMedicalHistory.setPrevious_treatments(medicalHistory.getPrevious_treatments());
+        currentMedicalHistory.setPrevious_treatment(medicalHistory.getPrevious_treatment());
 
         livestockRecord.setMedicalHistory(currentMedicalHistory);
         livestockRecordService.updateMedicalHistory(livestockRecord);
