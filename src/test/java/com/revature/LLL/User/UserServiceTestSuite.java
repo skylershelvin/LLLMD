@@ -23,7 +23,7 @@ public class UserServiceTestSuite {
     @InjectMocks
     private UserService mockUserService;
 
-    private static User testUser = new User(5, "Jack", "McDonald", "jack@mail.com", "jackpw", User.userType.OWNER);
+    private static User testUser = new User(5, "Jack", "McDonald", "jack@mail.com", "jackpw");
 
     @Test
     public void testFindByEmailAndPassword(){
@@ -39,22 +39,20 @@ public class UserServiceTestSuite {
 
     @Test
     public void whenFindAllFarmersThenReturnListOfUserResponseDTO() {
-        List<User> farmers = List.of(new User(1, "John", "Doe", "john@example.com", "password", User.userType.OWNER));
-        when(mockUserRepository.findByUserType(User.userType.OWNER)).thenReturn(Optional.of(farmers));
-
+        List<User> farmers = List.of(new User(1, "John", "Doe", "john@example.com", "password"));
+        when(mockUserRepository.findAll()).thenReturn(farmers);
         List<UserResponseDTO> result = mockUserService.findAllFarmers();
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(mockUserRepository, times(1)).findByUserType(User.userType.OWNER);
+        verify(mockUserRepository, times(1)).findAll();
     }
 
     @Test
     public void whenFindAllFarmersThenThrowDataNotFoundException() {
-        when(mockUserRepository.findByUserType(User.userType.OWNER)).thenReturn(Optional.of(Collections.emptyList()));
-
+        when(mockUserRepository.findAll()).thenReturn(Collections.emptyList());
         assertThrows(DataNotFoundException.class, () -> mockUserService.findAllFarmers());
-        verify(mockUserRepository, times(1)).findByUserType(User.userType.OWNER);
+        verify(mockUserRepository, times(1)).findAll();
     }
 }
 

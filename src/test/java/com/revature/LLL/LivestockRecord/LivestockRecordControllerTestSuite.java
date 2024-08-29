@@ -61,48 +61,13 @@ public class LivestockRecordControllerTestSuite {
 
     /**
      * Test the getLivestockRecordsByUserId method in LivestockRecordController
-     * User type is VET
-     * @throws Exception
-     */
-    @Test
-    public void testGetLivestockRecordsByUserIdAsVet() throws Exception {
-        // Arrange
-        int userId = 1;
-
-        User vet = new User();
-        vet.setUserId(userId);
-
-        VetRecord vetRecord = new VetRecord();
-        vetRecord.setVetDetails(vet);
-
-        LivestockRecord record1 = new LivestockRecord();
-        record1.setVetRecord(vetRecord);
-
-        LivestockRecord record2 = new LivestockRecord();
-        record2.setVetRecord(vetRecord);
-
-        List<LivestockRecord> records = Arrays.asList(record1, record2);
-
-        when(livestockRecordService.findAllByVetRecordVetDetailsUserId(userId)).thenReturn(records);
-
-        // Act & Assert
-        mockMvc.perform(get("/medicalRecord/user")
-                        .param("userId", String.valueOf(userId))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(records)));
-    }
-
-    /**
-     * Test the getLivestockRecordsByUserId method in LivestockRecordController
      * User type is OWNER
      * @throws Exception
      */
     @Test
-    public void testGetLivestockRecordsByUserIdAsOwner() throws Exception {
+    public void testGetLivestockRecordsByUserId() throws Exception {
         // Arrange
         int userId = 1;
-        String userType = "OWNER";
 
         OwnerInfoDTO owner = new OwnerInfoDTO();
         owner.setUserId(userId);
@@ -123,7 +88,6 @@ public class LivestockRecordControllerTestSuite {
         // Act & Assert
         mockMvc.perform(get("/medicalRecord/user")
                         .param("userId", String.valueOf(userId))
-                        .header("userType", userType)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(records)));
@@ -187,19 +151,16 @@ public class LivestockRecordControllerTestSuite {
         patientIdentification.setAnimalId(nextAnimalId);
 
         MedicalHistory medicalHistory = new MedicalHistory();
-        medicalHistory.setVaccination_history(new String[]{"moderna", "pfizer"});
+        medicalHistory.setVaccination_history("modernapfizer");
 
         CurrentCondition condition = new CurrentCondition();
         condition.setDiagnosis("ACL tear");
 
         TreatmentPlan plan = new TreatmentPlan();
-        plan.setMedications_prescribed(new String[]{"tylenol", "ibuprofen"});
+        plan.setMedications_prescribed("tylenol, ibuprofen");
 
         LivestockHealth health = new LivestockHealth();
         health.setMonitoring_schedule("weekly blood pressure and weight monitoring");
-
-        VetRecord vetRecord = new VetRecord();
-        vetRecord.setVetDetails(new User(3, "Joe", "Mama", "joe@mail.com", "password"));
 
         AdditionalNotes notes = new AdditionalNotes();
         notes.setEnvironmental_factors("not much personal space due to crowded barn");
@@ -210,7 +171,6 @@ public class LivestockRecordControllerTestSuite {
         livestockRecord.setCondition(condition);
         livestockRecord.setPlan(plan);
         livestockRecord.setHealth(health);
-        livestockRecord.setVetRecord(vetRecord);
         livestockRecord.setNotes(notes);
 
 
@@ -229,7 +189,7 @@ public class LivestockRecordControllerTestSuite {
     @Test
     public void testUpdateSymptoms() throws Exception {
         // Arrange
-        String[] newSymptoms = new String[]{"symptom3", "symptom4"};
+        String newSymptoms = "symptom3, symptom4";
 
         CurrentCondition condition = new CurrentCondition();
         condition.setSymptoms(newSymptoms);
@@ -257,14 +217,14 @@ public class LivestockRecordControllerTestSuite {
         // set up MedicalHistory and TreatmentPlan objects to use during the patch
         MedicalHistory medicalHistory = new MedicalHistory();
         TreatmentPlan treatmentPlan = new TreatmentPlan();
-        treatmentPlan.setAntibiotics(new String[]{"antibiotic1", "antibiotic2"});
-        treatmentPlan.setMedications_prescribed(new String[]{"medication1", "medication2"});
+        treatmentPlan.setAntibiotics("antibiotic1, antibiotic2");
+        treatmentPlan.setMedications_prescribed("medication1, medication2");
         treatmentPlan.setTreatment_procedures("procedure1");
         treatmentPlan.setFollowup_instructions("instructions1");
 
-        medicalHistory.setPrevious_treatments(new TreatmentPlan[]{treatmentPlan});
-        medicalHistory.setPrevious_illnesses(new String[]{"illness1", "illness2"});
-        medicalHistory.setVaccination_history(new String[]{"vaccination1", "vaccination2"});
+        medicalHistory.setPrevious_treatment(treatmentPlan);
+        medicalHistory.setPrevious_illnesses("illness1, illness2");
+        medicalHistory.setVaccination_history("vaccination1, vaccination2");
 
         // set up PatientIdentification object to be used to find which record to update via animal_id
         PatientIdentification mockPatientIdentification = new PatientIdentification();
@@ -288,7 +248,6 @@ public class LivestockRecordControllerTestSuite {
 
         mockMvc.perform(patch("/medicalRecord/medicalHistory")
                         .param("animalId", String.valueOf(1))
-                        .header("userType", "VET")
                         .content(objectMapper.writeValueAsString(record1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
