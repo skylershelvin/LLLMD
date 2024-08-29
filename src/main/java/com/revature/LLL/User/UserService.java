@@ -1,39 +1,41 @@
 package com.revature.LLL.User;
 
+import com.revature.LLL.User.dtos.OwnerInfoDTO;
 import com.revature.LLL.User.dtos.UserResponseDTO;
 import com.revature.LLL.util.exceptions.DataNotFoundException;
 import com.revature.LLL.util.exceptions.InvalidInputException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.revature.LLL.User.dtos.UserResponseDTO;
+import com.revature.LLL.util.exceptions.DataNotFoundException;
+import com.revature.LLL.util.exceptions.InvalidInputException;
 import com.revature.LLL.util.interfaces.Serviceable;
 
-import javax.naming.AuthenticationException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 /**
- * UserService provides business logic for user operations such as creating a user,
- * finding a user by email in password for authenthication, and conversion of user info
- * into other form of data through DTO's
+ * UserService provides business logic for user operations such as creating a
+ * user, finding a user by email in password for authenthication, and conversion
+ * of user info into other form of data through DTO's
  *
  * It interacts with the UserRepository to perform database interactions
  */
 @Service
 public class UserService implements Serviceable<User> {
+
     private final UserRepository userRepository;
     //including Passwordencoder spring bean here, this function comes from SecurityConfig file on line 46
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * Constructor for UserService. The UserRepository is injected through constructor injection.
+     * Constructor for UserService. The UserRepository is injected through
+     * constructor injection.
      *
      * @param userRepository the repository that handles database interactions
      */
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -41,12 +43,14 @@ public class UserService implements Serviceable<User> {
     /**
      * Authenticates a user by providing email and password
      *
-     * @param email    the email of the user attempting to log in
+     * @param email the email of the user attempting to log in
      * @param password the password of the user attempting to log in
-     * @return the User object if the email and password are correct otherwise throws exception
-     * @throws AuthenticationException gets thrown if email or password are incorrect
+     * @return the User object if the email and password are correct otherwise
+     * throws exception
+     * @throws AuthenticationException gets thrown if email or password are
+     * incorrect
      */
-    public User findByEmailAndPassword(String email, String password) throws AuthenticationException{
+    public User findByEmailAndPassword(String email, String password) throws AuthenticationException {
         return userRepository.findByEmailAndPassword(email, password).orElseThrow(() -> new AuthenticationException("Incorrect email or password."));
     }
 
@@ -59,7 +63,7 @@ public class UserService implements Serviceable<User> {
      */
     @Override
     public List<User> findAll() {
-        return List.of();
+        return userRepository.findAll();
     }
 
     /**
@@ -67,11 +71,12 @@ public class UserService implements Serviceable<User> {
      *
      * @param newUser the User object to be created
      * @return the created User object after being saved to database
-     * @throws InvalidInputException if the User object does not contain an email or password
+     * @throws InvalidInputException if the User object does not contain an
+     * email or password
      */
     @Override
     public User create(User newUser) throws InvalidInputException {
-        if(newUser.getEmail() == null || newUser.getPassword() == null){
+        if (newUser.getEmail() == null || newUser.getPassword() == null) {
             throw new InvalidInputException("User must contain an email and password");
         }
         //hashing and salting users password here before it gets saved to the database
@@ -87,10 +92,10 @@ public class UserService implements Serviceable<User> {
      * @throws if no user is found with provided id
      */
     @Override
-    public User findById(int id){
-        try{
+    public User findById(int id) {
+        try {
             return userRepository.findById(id).get();
-        } catch(NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             throw new DataNotFoundException("No such user with that id found");
         }
 
@@ -124,22 +129,28 @@ public class UserService implements Serviceable<User> {
     }
 
     /**
-     * Retrieves a list of all users with the userType OWNER and converts them to UserResponseDTO objects.
+     * Retrieves a list of all users with the userType OWNER and converts them
+     * to UserResponseDTO objects.
      *
-     * @return a list of UserResponseDTO objects representing all users with the userType OWNER.
-     * @throws DataNotFoundException if no users with the userType OWNER are found.
+     * @return a list of UserResponseDTO objects representing all users with the
+     * userType OWNER.
+     * @throws DataNotFoundException if no users with the userType OWNER are
+     * found.
      */
     public List<UserResponseDTO> findAllFarmers() {
-        return userRepository.findByUserType(User.userType.OWNER)
-                .orElseThrow(() -> new DataNotFoundException("No farmers found."))
-                .stream()
+        List<User> owners = userRepository.findAll();
+        if (owners.isEmpty()) {
+            throw new DataNotFoundException("No farmers found.");
+        }
+
+        return owners.stream()
                 .map(UserResponseDTO::new)
                 .toList();
     }
     //todo: find by email
 
     public User findByEmail(String email) throws AuthenticationException {
-        return (User) userRepository.findByEmail(email).orElseThrow(()-> new AuthenticationException("Incorrect email"));
+        return (User) userRepository.findByEmail(email).orElseThrow(() -> new AuthenticationException("Incorrect email"));
     }
 
 }

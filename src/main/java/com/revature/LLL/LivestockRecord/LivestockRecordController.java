@@ -1,27 +1,32 @@
 package com.revature.LLL.LivestockRecord;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.revature.LLL.User.dtos.OwnerInfoDTO;
-import com.revature.LLL.util.exceptions.UnauthorizedException;
-import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.coyote.Response;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.revature.LLL.util.exceptions.UnauthorizedException;
+
+import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/medicalRecord")
 public class LivestockRecordController {
+
     private final LivestockRecordService livestockRecordService;
 
     @Autowired
@@ -34,6 +39,7 @@ public class LivestockRecordController {
 
     /**
      * Get all livestock record by entry ID
+     *
      * @param entryId
      * @return
      */
@@ -48,24 +54,23 @@ public class LivestockRecordController {
 
     /**
      * Get all livestock records for user
+     *
      * @param userId
-     * @param userType
      * @return
      */
-    // localhost:8080/medicalRecord/user?userId=123
+    // localhost:8080/medicalRecord/user?userId=3
     @GetMapping("/user")
-    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId, @RequestHeader String userType) {
-        if (userType.equals("VET")) {
-            return ResponseEntity.ok(livestockRecordService.findAllByVetRecordVetDetailsUserId(userId));
-        } else if (userType.equals("OWNER")) {
-            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
-        } else {
+    public ResponseEntity<List<LivestockRecord>> getLivestockRecordsByUserId(@Valid @RequestParam int userId) {
+        if (userId == 0) {
             return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(livestockRecordService.findAllByPatientIdentificationOwnerInfoUserId(userId));
         }
     }
 
     /**
      * Get all livestock record by animal ID
+     *
      * @param animalId
      * @return
      */
@@ -119,34 +124,21 @@ public class LivestockRecordController {
      *         "monitoring_schedule": "weekly blood pressure and weight monitoring",
      *         "progress_notes": "patient seems to be in a better mood"
      *     },
-     *     "vetRecord": {
-     *         "vet_details": {
-     *             "userId": 3,
-     *             "firstName": "Joe",
-     *             "lastName": "Mama",
-     *             "email": "joe@mail.com",
-     *             "userType": "VET"
-     *         },
-     *         "record_date": "2024-08-26",
-     *         "signature": "JMamas"
-     *     },
      *     "notes": {
      *         "environmental_factors": "not much personal space due to crowded barn",
      *         "behavioral_observations": "reserved, easygoing"
      *     }
      * }
+
      * @param livestockRecord
-     * @param userType
      * @return
      * @throws JsonProcessingException
      */
     @PostMapping("/animal")
-    public ResponseEntity<LivestockRecord> createLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord, @RequestParam String userType) throws JsonProcessingException {
-        // check if userType is vet
-        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to insert a livestock entry");
+    public ResponseEntity<LivestockRecord> createLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord) throws JsonProcessingException {
+        // livestock record must have a patient identification
+        if(livestockRecord.getPatientIdentification() == null) {
 
-        // livestock record must have a vet record and patient identification
-        if(livestockRecord.getVetRecord() == null || livestockRecord.getPatientIdentification() == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -156,85 +148,14 @@ public class LivestockRecordController {
         // set the animal_id in the PatientIdentification JSON object
         livestockRecord.getPatientIdentification().setAnimalId(nextAnimalId);
 
-
         return ResponseEntity.status(HttpStatus.CREATED).body(livestockRecordService.create(livestockRecord));
-    }
-
-    /**
-     * Update a livestock record. Does not update the owner_info field of the PatientIdentification JSON object, instead
-     * it uses the existing owner_info of the given animal_id when updating the record.
-     * example request body:
-     * {
-     *     "patientIdentification": {
-     *         "animal_id": 20,
-     *         "breed": "labrador",
-     *         "age": 12,
-     *         "sex": "MALE"
-     *     },
-     *     "medicalHistory": {
-     *         "previous_illnesses": [],
-     *         "previous_treatments": [{
-     *             "medications_prescribed": [],
-     *             "antibiotics": [],
-     *             "treatment_procedures": "Rest, Ice, Compression, Elevation",
-     *             "followup_instructions": "Come back in 6 weeks"
-     *         }],
-     *         "vaccination_history": ["moderna", "pfizer"]
-     *     },
-     *     "condition": {
-     *         "examination_date": "2024-08-24",
-     *         "diagnosis": "ACL tear",
-     *         "diagnosis_tests": ["Lachman Test", "Anterior Drawer Test"],
-     *         "symptoms": ["headache", "fever", "depression"]
-     *     },
-     *     "plan": {
-     *         "medications_prescribed": ["ibuprofen"],
-     *         "antibiotics": ["penecillin", "levofloxacin"],
-     *         "treatment_procedures": "Rest, Ice, Compression, Elevation",
-     *         "followup_instructions": "Come back in 6 weeks"
-     *     },
-     *     "health": {
-     *         "monitoring_schedule": "weekly blood pressure and weight monitoring",
-     *         "progress_notes": "patient seems to be in a better mood"
-     *     },
-     *     "vetRecord": {
-     *         "vet_details": {
-     *             "userId": 3,
-     *             "firstName": "Moe",
-     *             "lastName": "Jama",
-     *             "email": "joe@mail.com"
-     *         },
-     *         "record_date": "2024-08-28",
-     *         "signature": "JMamas"
-     *     },
-     *     "notes": {
-     *         "environmental_factors": "not much personal space due to crowded barn",
-     *         "behavioral_observations": "reserved, easygoing"
-     *     }
-     * }
-     * @param livestockRecord
-     * @param userType
-     * @return
-     * @throws JsonProcessingException
-     */
-    @PatchMapping("/animal")
-    public ResponseEntity<LivestockRecord> updateLivestockRecord(@Valid @RequestBody LivestockRecord livestockRecord, @RequestParam String userType) throws JsonProcessingException {
-        // check if userType is vet
-        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to insert a livestock entry");
-
-        // livestock record must have a vet record and patient identification and existing animal_id
-        if(livestockRecord.getVetRecord() == null || livestockRecord.getPatientIdentification() == null || livestockRecord.getPatientIdentification().getAnimalId() == 0) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(livestockRecordService.update(livestockRecord));
     }
 
     @PatchMapping("/symptoms")
     public ResponseEntity<LivestockRecord> updateSymptoms(@Valid @RequestBody String[] symptoms, @RequestParam int animalId) {
         // check if entry in livestock table exists via animal_id
         Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
-        if(optionalLivestockRecord.isEmpty()) {
+        if (optionalLivestockRecord.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
@@ -243,7 +164,7 @@ public class LivestockRecordController {
         CurrentCondition condition = livestockRecord.getCondition();
 
         // make new condition if none exists for the livestock record
-        if(condition == null) {
+        if (condition == null) {
             condition = new CurrentCondition();
         }
 
@@ -266,12 +187,12 @@ public class LivestockRecordController {
     }
      */
     @PatchMapping("/medicalHistory")
-    public ResponseEntity<LivestockRecord> updateMedicalHistory(@Valid @RequestBody MedicalHistory medicalHistory, @RequestParam int animalId, @RequestHeader String userType){
-        if(!userType.equals("VET")) throw new UnauthorizedException("You must be a vet to add symptoms");
+    public ResponseEntity<LivestockRecord> updateMedicalHistory(@Valid @RequestBody MedicalHistory medicalHistory, @RequestParam int animalId){
+
 
         // check if entry in livestock table exists
         Optional<LivestockRecord> optionalLivestockRecord = Optional.ofNullable(livestockRecordService.findByPatientIdentificationAnimalId(animalId));
-        if(optionalLivestockRecord.isEmpty()) {
+        if (optionalLivestockRecord.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         LivestockRecord livestockRecord = optionalLivestockRecord.get();

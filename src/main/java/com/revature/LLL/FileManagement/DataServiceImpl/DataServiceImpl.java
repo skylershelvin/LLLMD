@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class DataServiceImpl implements DataService {
         Sheet sheet = workbook.getSheetAt(0);
 
         int noOfColumns = sheet.getRow(0).getLastCellNum();
-        System.out.println("-------Sheet has '"+noOfColumns+"' columns------");
+        System.out.println("-------Sheet has '" + noOfColumns + "' columns------");
 
         for (Row row : sheet) {
             for (Cell cell : row) {
@@ -63,7 +62,6 @@ public class DataServiceImpl implements DataService {
             e.printStackTrace();
         }
 
-
         return uploadedFileList;
     }
 
@@ -71,16 +69,16 @@ public class DataServiceImpl implements DataService {
         ArrayList<UploadedFile> uploadedFileList = new ArrayList<UploadedFile>();
 
         int i = noOfColumns;
-        do{
+        do {
             UploadedFile uFile = new UploadedFile();
 
             uFile.setPreviousIllnesses(list.get(i));
-            uFile.setGetPreviousTreatments(list.get(i +1));
+            uFile.setGetPreviousTreatments(list.get(i + 1));
             uFile.setVaccinationHistory(list.get(i + 2));
 
             uploadedFileList.add(uFile);
             i = i + (noOfColumns);
-        }while(i < list.size());
+        } while (i < list.size());
         return uploadedFileList;
 
     }

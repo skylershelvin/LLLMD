@@ -2,10 +2,8 @@
 package com.revature.LLL.LivestockRecord;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.revature.LLL.User.User;
 import com.revature.LLL.User.dtos.OwnerInfoDTO;
-import com.revature.LLL.User.dtos.VetDetailsDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -70,9 +68,8 @@ public class LivestockRecordControllerTestSuite {
     public void testGetLivestockRecordsByUserIdAsVet() throws Exception {
         // Arrange
         int userId = 1;
-        String userType = "VET";
 
-        VetDetailsDTO vet = new VetDetailsDTO();
+        User vet = new User();
         vet.setUserId(userId);
 
         VetRecord vetRecord = new VetRecord();
@@ -91,7 +88,6 @@ public class LivestockRecordControllerTestSuite {
         // Act & Assert
         mockMvc.perform(get("/medicalRecord/user")
                         .param("userId", String.valueOf(userId))
-                        .header("userType", userType)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(records)));
@@ -178,7 +174,6 @@ public class LivestockRecordControllerTestSuite {
     @Test
     public void testCreateLivestockRecord() throws Exception {
         // Arrange
-        String userType = "VET";
 
         OwnerInfoDTO owner = new OwnerInfoDTO(1, "Charles", "Tester", "charles@mail.com");
         PatientIdentification patientIdentification = new PatientIdentification();
@@ -204,7 +199,7 @@ public class LivestockRecordControllerTestSuite {
         health.setMonitoring_schedule("weekly blood pressure and weight monitoring");
 
         VetRecord vetRecord = new VetRecord();
-        vetRecord.setVetDetails(new VetDetailsDTO(3, "Joe", "Mama", "joe@mail.com"));
+        vetRecord.setVetDetails(new User(3, "Joe", "Mama", "joe@mail.com", "password"));
 
         AdditionalNotes notes = new AdditionalNotes();
         notes.setEnvironmental_factors("not much personal space due to crowded barn");
@@ -224,68 +219,11 @@ public class LivestockRecordControllerTestSuite {
 
         // Act & Assert
         mockMvc.perform(post("/medicalRecord/animal")
-                        .param("userType", userType)
                         .content(objectMapper.writeValueAsString(livestockRecord))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(livestockRecord)));
         verify(livestockRecordService, times(1)).create(any(LivestockRecord.class));
-    }
-
-    @Test
-    public void testUpdateLivestockRecord() throws Exception {
-        // Arrange
-        String userType = "VET";
-
-        OwnerInfoDTO owner = new OwnerInfoDTO(1, "Charles", "Tester", "charles@mail.com");
-        PatientIdentification patientIdentification = new PatientIdentification();
-        patientIdentification.setBreed("pitbull");
-        patientIdentification.setAge(12);
-        patientIdentification.setSex(PatientIdentification.Sex.FEMALE);
-        patientIdentification.setOwnerInfo(owner);
-        patientIdentification.setAnimalId(100);
-
-        MedicalHistory medicalHistory = new MedicalHistory();
-        medicalHistory.setVaccination_history(new String[]{"moderna", "pfizer"});
-
-        CurrentCondition condition = new CurrentCondition();
-        condition.setDiagnosis("ACL tear");
-
-        TreatmentPlan plan = new TreatmentPlan();
-        plan.setMedications_prescribed(new String[]{"tylenol", "ibuprofen"});
-
-        LivestockHealth health = new LivestockHealth();
-        health.setMonitoring_schedule("weekly blood pressure and weight monitoring");
-
-        VetRecord vetRecord = new VetRecord();
-        vetRecord.setVetDetails(new VetDetailsDTO(3, "Joe", "Mama", "joe@mail.com"));
-
-        AdditionalNotes notes = new AdditionalNotes();
-        notes.setEnvironmental_factors("not much personal space due to crowded barn");
-
-        LivestockRecord livestockRecord = new LivestockRecord();
-        livestockRecord.setPatientIdentification(patientIdentification);
-        livestockRecord.setMedicalHistory(medicalHistory);
-        livestockRecord.setCondition(condition);
-        livestockRecord.setPlan(plan);
-        livestockRecord.setHealth(health);
-        livestockRecord.setVetRecord(vetRecord);
-        livestockRecord.setNotes(notes);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        when(livestockRecordService.update(any(LivestockRecord.class))).thenReturn(livestockRecord);
-
-        // Act & Assert
-        mockMvc.perform(patch("/medicalRecord/animal")
-                        .param("userType", userType)
-                        .content(objectMapper.writeValueAsString(livestockRecord))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(livestockRecord)));
-
-        verify(livestockRecordService, times(1)).update(any(LivestockRecord.class));
     }
 
     @Test
